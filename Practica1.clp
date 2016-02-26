@@ -23,7 +23,7 @@
 	(mujer "Eva Maria Zuheros Montes")
 	(mujer "Cristina Zuheros Montes")
 	(hombre "Juan Jose Aguilera Gonzalez")
-	(mujer "Josefa Luque Ca�adas")
+	(mujer "Josefa Luque Caniadas")
 	(mujer "Aurora Reyes Zuheros")
 	(hombre "Jose Reyes Peralvarez")
 	(hombre "Santiago Gonzalez Torres")
@@ -74,12 +74,21 @@
 	(casado "Josefa Zuheros Calvo" "Santiago Gonzalez Torres")
 	)
 
+(defrule son_hijs
+			(casado ?casado1 ?casado2)
+			(hij_de ?casado1 ?hijo)
+			=>
+			(assert (hij_de ?casado2 ?hijo))
+)
+
 (defrule son_hermans
 	(hij_de ?padremadre ?hijo1)
 	(hij_de ?padremadre ?hijo2)
 	(test (neq ?hijo1 ?hijo2))	=>
 	(assert (herman_de ?hijo1 ?hijo2))
-	)
+)
+
+
 #Ya tendria mi arbol
 #Ahora procedemos a buscar informacion en el
 
@@ -95,77 +104,247 @@
 		(assert (buscorelacioncon2 ?SegundoNombre))
 )
 
-(defrule esHombre
+##############################################################
+##Relaciones de hermanos/hermanas (3posibles combinaciones):##
+##############################################################
+(defrule sonHermanas
 	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
+	(herman_de ?nombre1 ?nombre2)
+	(mujer ?nombre1)
+	(mujer ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " y " ?nombre2 " son hermanas. " crlf)
+	)
+
+(defrule sonHermanos1
+		(buscorelacioncon1 ?nombre1)
+		(buscorelacioncon2 ?nombre2)
+		(herman_de ?nombre1 ?nombre2)
+		(hombre ?nombre1)
+		=>
+		(printout t crlf ?nombre1 " y " ?nombre2 " son hermanos. " crlf)
+)
+
+(defrule sonHermanos2
+		(buscorelacioncon1 ?nombre1)
+		(buscorelacioncon2 ?nombre2)
+		(herman_de ?nombre1 ?nombre2)
+		(hombre ?nombre2)
+		=>
+		(printout t crlf ?nombre1 " y " ?nombre2 " son hermanos. " crlf)
+)
+
+##############################################################
+################## Relaciones de padre/hija:##################
+##############################################################
+#Relacion de padre hija
+(defrule esPadreHija1
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(hij_de ?nombre2 ?nombre1)
+	(hombre ?nombre2)
+	(mujer ?nombre1)
+	=>
+	(printout t crlf ?nombre2 " es padre de " ?nombre1)
+	(printout t crlf ?nombre1 " es hija de " ?nombre2 crlf)
+)
+
+(defrule esPadreHija2
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(hij_de ?nombre1 ?nombre2)
+	(mujer ?nombre2)
 	(hombre ?nombre1)
 	=>
-	(printout t crlf ?nombre1 " es hombre")
+	(printout t crlf ?nombre1 " es padre de " ?nombre2)
+	(printout t crlf ?nombre2 " es hija de " ?nombre1 crlf)
 )
 
-(defrule esMujer
-	(buscorelacioncon1 ?nombre)
+
+##############################################################
+################## Relaciones de padre/hijo:##################
+##############################################################
+(defrule esPadreHijo
+	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
-	(mujer ?nombre)
+	(hij_de ?nombre1 ?nombre2)
+	(hombre ?nombre2)
+	(hombre ?nombre1)
 	=>
-	(printout t crlf ?nombre " es mujer")
+	(printout t crlf ?nombre1 " es padre de " ?nombre2)
+	(printout t crlf ?nombre2 " es hijo de " ?nombre1 crlf)
 )
 
-(defrule buscandoHermano
-	(buscorelacioncon1 ?nombre)
+##############################################################
+################## Relaciones de madre/hijo:##################
+##############################################################
+#Relacion de padre hija
+(defrule esMadreHijo1
+	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
-	(herman_de ?nombre ?nombre2)
+	(hij_de ?nombre2 ?nombre1)
+	(mujer ?nombre2)
+	(hombre ?nombre1)
 	=>
-	(printout t crlf "Su Hermano es: " ?nombre2)
-	)
+	(printout t crlf ?nombre2 " es madre de " ?nombre1)
+	(printout t crlf ?nombre1 " es hijo de " ?nombre2 crlf)
+)
 
-(defrule buscandoPadre
-	(buscorelacioncon1 ?nombre)
+(defrule esMadreHijo2
+	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
-	(hij_de ?nombre2 ?nombre)
+	(hij_de ?nombre1 ?nombre2)
+	(hombre ?nombre2)
+	(mujer ?nombre1)
 	=>
-	(printout t crlf "Su padre es : " ?nombre2)
-	)
+	(printout t crlf ?nombre1 " es madre de " ?nombre2)
+	(printout t crlf ?nombre2 " es hijo de " ?nombre1 crlf)
+)
 
-(defrule buscandoMadre
-	(buscorelacioncon1 ?nombre)
+
+##############################################################
+################## Relaciones de madre/hija:##################
+##############################################################
+(defrule esMadreHija
+	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
-	(hij_de ?nombre2 ?nombre)
-	(casado ?nombre2 ?nombre3)
+	(hij_de ?nombre1 ?nombre2)
+	(mujer ?nombre2)
+	(mujer ?nombre1)
 	=>
-	(printout t crlf "Su madre es : " ?nombre3)
-	)
+	(printout t crlf ?nombre1 " es madre de " ?nombre2)
+	(printout t crlf ?nombre2 " es hija de " ?nombre1 crlf)
+)
 
-(defrule hijs
-	(buscorelacioncon1 ?nombre)
+##############################################################
+################# Relaciones de abuelo/nieto:#################
+##############################################################
+#Primero se pasa el nieto
+(defrule esAbueloNieto1
+	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
-	(hij_de ?nombre ?nombre2)
+	(hij_de ?nombre3 ?nombre1)
+	(hij_de ?nombre2 ?nombre3)
+	(hombre ?nombre1)
+	(hombre ?nombre2)
 	=>
-	(printout t crlf "Su hijo es : " ?nombre2)
-	)
+	(printout t crlf ?nombre2 " es abuelo de " ?nombre1)
+	(printout t crlf ?nombre1 " es nieto de " ?nombre2 crlf)
+)
 
-(defrule buscandoAbueloP
-	(buscorelacioncon1 ?nombre)
+#Primero se pasa el abuelo
+(defrule esAbueloNieto2
+	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
-	(hij_de ?nombre2 ?nombre)
 	(hij_de ?nombre3 ?nombre2)
-	(casado ?nombre3 ?nombre4)
+	(hij_de ?nombre1 ?nombre3)
+	(hombre ?nombre1)
+	(hombre ?nombre2)
 	=>
-	(printout t crlf "Su abuelo paterno es : " ?nombre3)
-	(printout t crlf "Su abuela paterna es : " ?nombre4)
-	)
+	(printout t crlf ?nombre1 " es abuelo de " ?nombre2)
+	(printout t crlf ?nombre2 " es nieto de " ?nombre1 crlf)
+)
 
-(defrule buscandoAbueloM
-	(buscorelacioncon1 ?nombre)
+##############################################################
+################# Relaciones de abuelo/nieta:#################
+##############################################################
+#Primero se pasa la nieta
+(defrule esAbueloNieta3
+	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
-	(hij_de ?nombre2 ?nombre)
-	(casado ?nombre2 ?nombre3)
-	(hij_de ?nombre4 ?nombre3)
-	(casado ?nombre4 ?nombre5)
+	(hij_de ?nombre3 ?nombre1)
+	(hij_de ?nombre2 ?nombre3)
+	(mujer ?nombre1)
+	(hombre ?nombre2)
 	=>
-	(printout t crlf "Su abuelo materno es : " ?nombre4)
-	(printout t crlf "Su abuela materna es : " ?nombre5)
-	)
+	(printout t crlf ?nombre2 " es abuelo de " ?nombre1)
+	(printout t crlf ?nombre1 " es nieta de " ?nombre2 crlf)
+)
+
+#Primero se pasa el abuelo
+(defrule esAbueloNieto4
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(hij_de ?nombre3 ?nombre2)
+	(hij_de ?nombre1 ?nombre3)
+	(hombre ?nombre1)
+	(mujer ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " es abuelo de " ?nombre2)
+	(printout t crlf ?nombre2 " es nieta de " ?nombre1 crlf)
+)
+
+##############################################################
+################# Relaciones de abuela/nieto:#################
+##############################################################
+#Primero se pasa el nieto
+(defrule esAbuelaNieto1
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(hij_de ?nombre3 ?nombre1)
+	(hij_de ?nombre2 ?nombre3)
+	(hombre ?nombre1)
+	(mujer ?nombre2)
+	=>
+	(printout t crlf ?nombre2 " es abuela de " ?nombre1)
+	(printout t crlf ?nombre1 " es nieto de " ?nombre2 crlf)
+)
+
+#Primero se pasa la abuela
+(defrule esAbuelaNieto2
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(hij_de ?nombre3 ?nombre2)
+	(hij_de ?nombre1 ?nombre3)
+	(mujer ?nombre1)
+	(hombre ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " es abuela de " ?nombre2)
+	(printout t crlf ?nombre2 " es nieto de " ?nombre1 crlf)
+)
+
+##############################################################
+################# Relaciones de abuela/nieta:#################
+##############################################################
+#Primero se pasa la nieta
+(defrule esAbuelaNieta3
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(hij_de ?nombre3 ?nombre1)
+	(hij_de ?nombre2 ?nombre3)
+	(mujer ?nombre1)
+	(mujer ?nombre2)
+	=>
+	(printout t crlf ?nombre2 " es abuela de " ?nombre1)
+	(printout t crlf ?nombre1 " es nieta de " ?nombre2 crlf)
+)
+
+#Primero se pasa la abuela
+(defrule esAbuelaNieto4
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(hij_de ?nombre3 ?nombre2)
+	(hij_de ?nombre1 ?nombre3)
+	(mujer ?nombre1)
+	(mujer ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " es abuela de " ?nombre2)
+	(printout t crlf ?nombre2 " es nieta de " ?nombre1 crlf)
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 (defrule buscandoTios
 	(buscorelacioncon1 ?nombre)
