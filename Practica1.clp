@@ -22,7 +22,7 @@
 	(hombre "Jose David Zuheros Montes")
 	(mujer "Eva Maria Zuheros Montes")
 	(mujer "Cristina Zuheros Montes")
-	(hombre "Juan Jose Aguilera Gonzalez")
+	(hombre "Juan Jose Aguilera Garcia")
 	(mujer "Josefa Luque Caniadas")
 	(mujer "Aurora Reyes Zuheros")
 	(hombre "Jose Reyes Peralvarez")
@@ -67,7 +67,7 @@
 	(hij_de "Antonia Calvo Gonzalez" "Josefa Zuheros Calvo")
 	)
 (deffacts matrimonios
-	(casado "Maria del Rosario Montes Roldan" "Juan Jose Aguilera Gonzalez")
+	(casado "Maria del Rosario Montes Roldan" "Juan Jose Aguilera Garcia")
 	(casado "Jose Montes Roldan" "Josefa Luque Caniadas")
 	(casado "Manuel Montes Roldan" "Aurora Reyes Zuheros")
 	(casado "Victoria Zuheros Calvo" "Jose Reyes Peralvarez")
@@ -165,7 +165,7 @@
 ##############################################################
 ################## Relaciones de padre/hijo:##################
 ##############################################################
-(defrule esPadreHijo
+(defrule esPadreHijo1
 	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
 	(hij_de ?nombre1 ?nombre2)
@@ -176,6 +176,16 @@
 	(printout t crlf ?nombre2 " es hijo de " ?nombre1 crlf)
 )
 
+(defrule esPadreHijo2
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(hij_de ?nombre2 ?nombre1)
+	(hombre ?nombre2)
+	(hombre ?nombre1)
+	=>
+	(printout t crlf ?nombre2 " es padre de " ?nombre1)
+	(printout t crlf ?nombre1 " es hijo de " ?nombre2 crlf)
+)
 ##############################################################
 ################## Relaciones de madre/hijo:##################
 ##############################################################
@@ -206,7 +216,7 @@
 ##############################################################
 ################## Relaciones de madre/hija:##################
 ##############################################################
-(defrule esMadreHija
+(defrule esMadreHija1
 	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
 	(hij_de ?nombre1 ?nombre2)
@@ -215,6 +225,17 @@
 	=>
 	(printout t crlf ?nombre1 " es madre de " ?nombre2)
 	(printout t crlf ?nombre2 " es hija de " ?nombre1 crlf)
+)
+
+(defrule esMadreHija2
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(hij_de ?nombre2 ?nombre1)
+	(mujer ?nombre2)
+	(mujer ?nombre1)
+	=>
+	(printout t crlf ?nombre2 " es madre de " ?nombre1)
+	(printout t crlf ?nombre1 " es hija de " ?nombre2 crlf)
 )
 
 ##############################################################
@@ -250,7 +271,7 @@
 ################# Relaciones de abuelo/nieta:#################
 ##############################################################
 #Primero se pasa la nieta
-(defrule esAbueloNieta3
+(defrule esAbueloNieta1
 	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
 	(hij_de ?nombre3 ?nombre1)
@@ -263,7 +284,7 @@
 )
 
 #Primero se pasa el abuelo
-(defrule esAbueloNieto4
+(defrule esAbueloNieta2
 	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
 	(hij_de ?nombre3 ?nombre2)
@@ -308,7 +329,7 @@
 ################# Relaciones de abuela/nieta:#################
 ##############################################################
 #Primero se pasa la nieta
-(defrule esAbuelaNieta3
+(defrule esAbuelaNieta1
 	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
 	(hij_de ?nombre3 ?nombre1)
@@ -321,7 +342,7 @@
 )
 
 #Primero se pasa la abuela
-(defrule esAbuelaNieto4
+(defrule esAbuelaNieta2
 	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
 	(hij_de ?nombre3 ?nombre2)
