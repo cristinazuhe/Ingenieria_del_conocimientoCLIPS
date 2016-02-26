@@ -359,32 +359,130 @@
 
 
 
-
-
-
-
-
-
-
-
-(defrule buscandoTios
-	(buscorelacioncon1 ?nombre)
+##############################################################
+################# Relaciones de tia/sobrina:#################
+##############################################################
+#Primero la sobrina
+(defrule esTiaSobrina1
+	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
-	(hij_de ?nombre2 ?nombre)
+	(hij_de ?nombre3 ?nombre1)
 	(herman_de ?nombre2 ?nombre3)
+	(mujer ?nombre1)
+	(mujer ?nombre2)
 	=>
-	(printout t crlf "Su tio/a es : " ?nombre3)
+	(printout t crlf ?nombre1 " es sobrina de " ?nombre2)
+	(printout t crlf ?nombre2 " es tia de " ?nombre1 crlf)
 	)
 
-(defrule buscandoTiosM
-	(buscorelacioncon1 ?nombre)
+#Primero la tia
+(defrule esTiaSobrina2
+		(buscorelacioncon1 ?nombre1)
+		(buscorelacioncon2 ?nombre2)
+		(hij_de ?nombre3 ?nombre2)
+		(herman_de ?nombre3 ?nombre1)
+		(mujer ?nombre1)
+		(mujer ?nombre2)
+		=>
+		(printout t crlf ?nombre2 " es sobrina de " ?nombre1)
+		(printout t crlf ?nombre1 " es tia de " ?nombre2 crlf)
+)
+
+
+##############################################################
+################# Relaciones de tia/sobrino:#################
+##############################################################
+#Primero el sobrino
+(defrule esTiaSobrino1
+	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
-	(hij_de ?nombre2 ?nombre)
-	(casado ?nombre2 ?nombre3)
-	(herman_de ?nombre3 ?nombre4)
+	(hij_de ?nombre3 ?nombre1)
+	(herman_de ?nombre2 ?nombre3)
+	(hombre ?nombre1)
+	(mujer ?nombre2)
 	=>
-	(printout t crlf "Su tio/a es : " ?nombre4)
+	(printout t crlf ?nombre1 " es sobrino de " ?nombre2)
+	(printout t crlf ?nombre2 " es tia de " ?nombre1 crlf)
 	)
+
+#Primero la tia
+(defrule esTiaSobrino2
+		(buscorelacioncon1 ?nombre1)
+		(buscorelacioncon2 ?nombre2)
+		(hij_de ?nombre3 ?nombre2)
+		(herman_de ?nombre3 ?nombre1)
+		(mujer ?nombre1)
+		(hombre ?nombre2)
+		=>
+		(printout t crlf ?nombre2 " es sobrino de " ?nombre1)
+		(printout t crlf ?nombre1 " es tia de " ?nombre2 crlf)
+)
+
+
+##############################################################
+################# Relaciones de tio/sobrina:#################
+##############################################################
+#Primero la sobrina
+(defrule esTioSobrina1
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(hij_de ?nombre3 ?nombre1)
+	(herman_de ?nombre2 ?nombre3)
+	(mujer ?nombre1)
+	(hombre ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " es sobrina de " ?nombre2)
+	(printout t crlf ?nombre2 " es tio de " ?nombre1 crlf)
+	)
+
+#Primero la tio
+(defrule esTioSobrina2
+		(buscorelacioncon1 ?nombre1)
+		(buscorelacioncon2 ?nombre2)
+		(hij_de ?nombre3 ?nombre2)
+		(herman_de ?nombre3 ?nombre1)
+		(hombre ?nombre1)
+		(mujer ?nombre2)
+		=>
+		(printout t crlf ?nombre2 " es sobrina de " ?nombre1)
+		(printout t crlf ?nombre1 " es tio de " ?nombre2 crlf)
+)
+
+
+##############################################################
+################# Relaciones de tio/sobrino:#################
+##############################################################
+#Primero el sobrino
+(defrule esTioSobrino1
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(hij_de ?nombre3 ?nombre1)
+	(herman_de ?nombre2 ?nombre3)
+	(hombre ?nombre1)
+	(hombre ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " es sobrino de " ?nombre2)
+	(printout t crlf ?nombre2 " es tio de " ?nombre1 crlf)
+	)
+
+#Primero la tio
+(defrule esTioSobrino2
+		(buscorelacioncon1 ?nombre1)
+		(buscorelacioncon2 ?nombre2)
+		(hij_de ?nombre3 ?nombre2)
+		(herman_de ?nombre3 ?nombre1)
+		(hombre ?nombre1)
+		(hombre ?nombre2)
+		=>
+		(printout t crlf ?nombre2 " es sobrino de " ?nombre1)
+		(printout t crlf ?nombre1 " es tio de " ?nombre2 crlf)
+)
+
+
+
+
+
+
 
 (defrule buscandoMatrimoniosTios
 	(buscorelacioncon1 ?nombre)
