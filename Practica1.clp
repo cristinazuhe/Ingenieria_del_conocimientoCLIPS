@@ -72,6 +72,7 @@
 	(casado "Manuel Montes Roldan" "Aurora Reyes Zuheros")
 	(casado "Victoria Zuheros Calvo" "Jose Reyes Peralvarez")
 	(casado "Josefa Zuheros Calvo" "Santiago Gonzalez Torres")
+	(casado "Alonso Zuheros Calvo" "Maria del Carmen Montes Roldan")
 	)
 
 (defrule son_hijs
@@ -86,6 +87,12 @@
 	(hij_de ?padremadre ?hijo2)
 	(test (neq ?hijo1 ?hijo2))	=>
 	(assert (herman_de ?hijo1 ?hijo2))
+)
+
+(defrule son_matrimonio
+	(casado ?casado1 ?casado2)
+	=>
+	(assert(casado ?casado2 ?casado1))
 )
 
 
@@ -450,7 +457,7 @@
 
 
 ##############################################################
-################# Relaciones de tio/sobrino:#################
+################# Relaciones de tio/sobrino: #################
 ##############################################################
 #Primero el sobrino
 (defrule esTioSobrino1
@@ -477,6 +484,125 @@
 		(printout t crlf ?nombre2 " es sobrino de " ?nombre1)
 		(printout t crlf ?nombre1 " es tio de " ?nombre2 crlf)
 )
+
+
+##############################################################
+################ Relaciones de yerno/suegro: #################
+##############################################################
+#primero el yerno
+(defrule esYernoSuegro1
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(casado ?nombre1 ?nombre3)
+	(hij_de ?nombre2 ?nombre3)
+	(hombre ?nombre1)
+	(hombre ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " es el yerno de " ?nombre2)
+	(printout t crlf ?nombre2 " es el suegro de " ?nombre1 crlf)
+)
+
+#primero el suegro
+(defrule esYernoSuegro2
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(casado ?nombre2 ?nombre3)
+	(hij_de ?nombre1 ?nombre3)
+	(hombre ?nombre1)
+	(hombre ?nombre2)
+	=>
+	(printout t crlf ?nombre2 " es el yerno de " ?nombre1)
+	(printout t crlf ?nombre1 " es el suegro de " ?nombre2 crlf)
+)
+##############################################################
+################ Relaciones de yerno/suegra: #################
+##############################################################
+#primero el yerno
+(defrule esYernoSuegra1
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(casado ?nombre1 ?nombre3)
+	(hij_de ?nombre2 ?nombre3)
+	(hombre ?nombre1)
+	(mujer ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " es el yerno de " ?nombre2)
+	(printout t crlf ?nombre2 " es la suegra de " ?nombre1 crlf)
+)
+
+#primero la suegra
+(defrule esYernoSuegra2
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(casado ?nombre2 ?nombre3)
+	(hij_de ?nombre1 ?nombre3)
+	(mujer ?nombre1)
+	(hombre ?nombre2)
+	=>
+	(printout t crlf ?nombre2 " es el yerno de " ?nombre1)
+	(printout t crlf ?nombre1 " es la suegra de " ?nombre2 crlf)
+)
+
+##############################################################
+################ Relaciones de nuera/suegro: #################
+##############################################################
+#primero la nuera
+(defrule esNueraSuegro1
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(casado ?nombre1 ?nombre3)
+	(hij_de ?nombre2 ?nombre3)
+	(mujer ?nombre1)
+	(hombre ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " es la nuera de " ?nombre2)
+	(printout t crlf ?nombre2 " es el suegro de " ?nombre1 crlf)
+)
+
+#primero el suegro
+(defrule esNueraSuegro2
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(casado ?nombre2 ?nombre3)
+	(hij_de ?nombre1 ?nombre3)
+	(hombre ?nombre1)
+	(mujer ?nombre2)
+	=>
+	(printout t crlf ?nombre2 " es la nuera de " ?nombre1)
+	(printout t crlf ?nombre1 " es el suegro de " ?nombre2 crlf)
+)
+##############################################################
+################ Relaciones de nuera/suegra: #################
+##############################################################
+#primero la nuera
+(defrule esNueraSuegra1
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(casado ?nombre1 ?nombre3)
+	(hij_de ?nombre2 ?nombre3)
+	(mujer ?nombre1)
+	(mujer ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " es la nuera de " ?nombre2)
+	(printout t crlf ?nombre2 " es la suegra de " ?nombre1 crlf)
+)
+
+#primero la suegra
+(defrule esNueraSuegra2
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(casado ?nombre2 ?nombre3)
+	(hij_de ?nombre1 ?nombre3)
+	(mujer ?nombre1)
+	(mujer ?nombre2)
+	=>
+	(printout t crlf ?nombre2 " es la nuera de " ?nombre1)
+	(printout t crlf ?nombre1 " es la suegra de " ?nombre2 crlf)
+)
+
+
+
+
 
 
 
@@ -520,22 +646,4 @@
 	(printout t crlf "Su cuñado/a es : " ?nombre3)
 )
 
-(defrule buscandoSuegros
-	(buscorelacioncon1 ?nombre)
-	(buscorelacioncon2 ?nombre2)
-	(casado ?nombre ?nombre2)
-	(hij_de ?nombre3 ?nombre2)
-	(casado ?nombre3 ?nombre4)
-	=>
-	(printout t crlf "Su suegros/as son : " ?nombre3 " y " ?nombre4 crlf)
-)
-
-(defrule buscandoSuegrosM
-	(buscorelacioncon1 ?nombre)
-	(buscorelacioncon2 ?nombre2)
-	(casado ?nombre2 ?nombre)
-	(hij_de ?nombre3 ?nombre2)
-	(casado ?nombre3 ?nombre4)
-	=>
-	(printout t crlf "Su suegros/as son : " ?nombre3 " y " ?nombre4 crlf)
 )
