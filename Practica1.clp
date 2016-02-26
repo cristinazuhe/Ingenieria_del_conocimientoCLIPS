@@ -480,52 +480,6 @@
 
 
 
-
-
-
-
-(defrule buscandoMatrimoniosTios
-	(buscorelacioncon1 ?nombre)
-	(buscorelacioncon2 ?nombre2)
-	(hij_de ?nombre2 ?nombre)
-	(herman_de ?nombre2 ?nombre3)
-	(casado ?nombre3 ?nombre4)
-	=>
-	(printout t crlf "Su tio/a es : " ?nombre4)
-	)
-
-(defrule buscandoMatrimoniosTiosM
-	(buscorelacioncon1 ?nombre)
-	(buscorelacioncon2 ?nombre2)
-	(hij_de ?nombre2 ?nombre)
-	(casado ?nombre2 ?nombre3)
-	(herman_de ?nombre3 ?nombre4)
-	(casado ?nombre4 ?nombre5)
-	=>
-	(printout t crlf "Su tio/a es : " ?nombre5)
-	)
-
-(defrule buscandoMatrimoniosTias
-	(buscorelacioncon1 ?nombre)
-	(buscorelacioncon2 ?nombre2)
-	(hij_de ?nombre2 ?nombre)
-	(herman_de ?nombre2 ?nombre3)
-	(casado ?nombre4 ?nombre3)
-	=>
-	(printout t crlf "Su tio/a es : " ?nombre4)
-	)
-
-(defrule buscandoMatrimoniosTiasM
-	(buscorelacioncon1 ?nombre)
-	(buscorelacioncon2 ?nombre2)
-	(hij_de ?nombre2 ?nombre)
-	(casado ?nombre2 ?nombre3)
-	(herman_de ?nombre3 ?nombre4)
-	(casado ?nombre5 ?nombre4)
-	=>
-	(printout t crlf "Su tio/a es : " ?nombre5)
-	)
-
 (defrule buscandoPrimos
 	(buscorelacioncon1 ?nombre)
 	(buscorelacioncon2 ?nombre2)
@@ -547,14 +501,6 @@
 	(printout t crlf "Su primo/a es : " ?nombre5)
 	)
 
-(defrule buscandoSobrino
-	(buscorelacioncon1 ?nombre)
-	(buscorelacioncon2 ?nombre2)
-	(herman_de ?nombre ?nombre2)
-	(hij_de ?nombre2 ?nombre3)
-	=>
-	(printout t crlf "Su sobrino/a es : " ?nombre3)
-)
 
 (defrule buscandoCunados
 	(buscorelacioncon1 ?nombre)
