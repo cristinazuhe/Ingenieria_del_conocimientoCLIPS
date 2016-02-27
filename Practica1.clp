@@ -112,7 +112,7 @@
 )
 
 ##############################################################
-##Relaciones de hermanos/hermanas (3posibles combinaciones):##
+##Relaciones de hermanos/hermanas (4posibles combinaciones):##
 ##############################################################
 (defrule sonHermanas
 	(buscorelacioncon1 ?nombre1)
@@ -129,6 +129,7 @@
 		(buscorelacioncon2 ?nombre2)
 		(herman_de ?nombre1 ?nombre2)
 		(hombre ?nombre1)
+		(mujer ?nombre2)
 		=>
 		(printout t crlf ?nombre1 " y " ?nombre2 " son hermanos. " crlf)
 )
@@ -138,9 +139,73 @@
 		(buscorelacioncon2 ?nombre2)
 		(herman_de ?nombre1 ?nombre2)
 		(hombre ?nombre2)
+		(mujer ?nombre1)
 		=>
 		(printout t crlf ?nombre1 " y " ?nombre2 " son hermanos. " crlf)
 )
+
+(defrule sonHermanos3
+		(buscorelacioncon1 ?nombre1)
+		(buscorelacioncon2 ?nombre2)
+		(herman_de ?nombre1 ?nombre2)
+		(hombre ?nombre2)
+		(hombre ?nombre1)
+		=>
+		(printout t crlf ?nombre1 " y " ?nombre2 " son hermanos. " crlf)
+)
+
+##############################################################
+####Relaciones de primos/primas (4posibles combinaciones):####
+##############################################################
+(defrule sonPrimas
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(mujer ?nombre1)
+	(mujer ?nombre2)
+	(hij_de ?nombre3 ?nombre1)
+	(herman_de ?nombre3 ?nombre4)
+	(hij_de ?nombre4 ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " y " ?nombre2 " son primas. " crlf)
+	)
+
+(defrule sonPrimos1
+		(buscorelacioncon1 ?nombre1)
+		(buscorelacioncon2 ?nombre2)
+		(hombre ?nombre1)
+		(mujer ?nombre2)
+		(hij_de ?nombre3 ?nombre1)
+		(herman_de ?nombre3 ?nombre4)
+		(hij_de ?nombre4 ?nombre2)
+		=>
+		(printout t crlf ?nombre1 " y " ?nombre2 " son primos. " crlf)
+)
+
+(defrule sonPrimos2
+		(buscorelacioncon1 ?nombre1)
+		(buscorelacioncon2 ?nombre2)
+		(hombre ?nombre2)
+		(mujer ?nombre1)
+		(hij_de ?nombre3 ?nombre1)
+		(herman_de ?nombre3 ?nombre4)
+		(hij_de ?nombre4 ?nombre2)
+		=>
+		(printout t crlf ?nombre1 " y " ?nombre2 " son primos. " crlf)
+)
+
+(defrule sonPrimos3
+		(buscorelacioncon1 ?nombre1)
+		(buscorelacioncon2 ?nombre2)
+		(hombre ?nombre2)
+		(hombre ?nombre1)
+		(hij_de ?nombre3 ?nombre1)
+		(herman_de ?nombre3 ?nombre4)
+		(hij_de ?nombre4 ?nombre2)
+		=>
+		(printout t crlf ?nombre1 " y " ?nombre2 " son primos. " crlf)
+)
+
+
 
 ##############################################################
 ################## Relaciones de padre/hija:##################
@@ -606,26 +671,7 @@
 
 
 
-(defrule buscandoPrimos
-	(buscorelacioncon1 ?nombre)
-	(buscorelacioncon2 ?nombre2)
-	(hij_de ?nombre2 ?nombre)
-	(herman_de ?nombre2 ?nombre3)
-	(hij_de ?nombre3 ?nombre4)
-	=>
-	(printout t crlf "Su primo/a es : " ?nombre4)
-	)
 
-(defrule buscandoPrimosM
-	(buscorelacioncon1 ?nombre)
-	(buscorelacioncon2 ?nombre2)
-	(hij_de ?nombre2 ?nombre)
-	(casado ?nombre2 ?nombre3)
-	(herman_de ?nombre3 ?nombre4)
-	(hij_de ?nombre4 ?nombre5)
-	=>
-	(printout t crlf "Su primo/a es : " ?nombre5)
-	)
 
 
 (defrule buscandoCunados
