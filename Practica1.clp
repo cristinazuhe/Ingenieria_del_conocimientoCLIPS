@@ -111,6 +111,20 @@
 		(assert (buscorelacioncon2 ?SegundoNombre))
 )
 
+
+##############################################################
+################### Relacion de matrimonio:###################
+##############################################################
+(defrule sonMatrimonio
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(casado ?nombre1 ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " y " ?nombre2 " estan casados . " crlf)
+)
+
+
+
 ##############################################################
 ##Relaciones de hermanos/hermanas (4posibles combinaciones):##
 ##############################################################
@@ -204,6 +218,8 @@
 		=>
 		(printout t crlf ?nombre1 " y " ?nombre2 " son primos. " crlf)
 )
+
+
 
 
 
@@ -666,30 +682,94 @@
 )
 
 
-
-
-
-
-
-
-
-
-(defrule buscandoCunados
-	(buscorelacioncon1 ?nombre)
+##############################################################
+###Relaciones de cuñados/cuñadas (8posibles combinaciones):###
+##############################################################
+(defrule buscandoCuniadas
+	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
-	(herman_de ?nombre ?nombre2)
+	(herman_de ?nombre1 ?nombre3)
 	(casado ?nombre2 ?nombre3)
+	(mujer ?nombre1)
+	(mujer ?nombre2)
 	=>
-	(printout t crlf "Su cuñado/a es : " ?nombre3)
+	(printout t crlf ?nombre1 " y " ?nombre2 " son cuniadas. " crlf)
+)
+(defrule buscandoCuniadas1
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(herman_de ?nombre2 ?nombre3)
+	(casado ?nombre1 ?nombre3)
+	(mujer ?nombre1)
+	(mujer ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " y " ?nombre2 " son cuniadas. " crlf)
 )
 
-(defrule buscandoCunadas
-	(buscorelacioncon1 ?nombre)
+(defrule buscandoCuniados1
+	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
-	(herman_de ?nombre ?nombre2)
-	(casado ?nombre3 ?nombre2)
+	(herman_de ?nombre1 ?nombre3)
+	(casado ?nombre2 ?nombre3)
+	(hombre ?nombre1)
+	(mujer ?nombre2)
 	=>
-	(printout t crlf "Su cuñado/a es : " ?nombre3)
+	(printout t crlf ?nombre1 " y " ?nombre2 " son cuniados. " crlf)
+)
+
+(defrule buscandoCuniados11
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(herman_de ?nombre2 ?nombre3)
+	(casado ?nombre1 ?nombre3)
+	(hombre ?nombre1)
+	(mujer ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " y " ?nombre2 " son cuniados. " crlf)
+)
+
+(defrule buscandoCuniados2
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(herman_de ?nombre1 ?nombre3)
+	(casado ?nombre2 ?nombre3)
+	(mujer ?nombre1)
+	(hombre ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " y " ?nombre2 " son cuniados. " crlf)
+)
+
+(defrule buscandoCuniados21
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(herman_de ?nombre2 ?nombre3)
+	(casado ?nombre1 ?nombre3)
+	(mujer ?nombre1)
+	(hombre ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " y " ?nombre2 " son cuniados. " crlf)
+)
+
+(defrule buscandoCuniados3
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(herman_de ?nombre1 ?nombre3)
+	(casado ?nombre2 ?nombre3)
+	(hombre ?nombre1)
+	(hombre ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " y " ?nombre2 " son cuniados. " crlf)
+)
+
+(defrule buscandoCuniados31
+	(buscorelacioncon1 ?nombre1)
+	(buscorelacioncon2 ?nombre2)
+	(herman_de ?nombre2 ?nombre3)
+	(casado ?nombre1 ?nombre3)
+	(hombre ?nombre1)
+	(hombre ?nombre2)
+	=>
+	(printout t crlf ?nombre1 " y " ?nombre2 " son cuniados. " crlf)
 )
 
 )
