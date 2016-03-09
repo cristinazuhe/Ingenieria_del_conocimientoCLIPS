@@ -1,8 +1,7 @@
 (deftemplate Relacion
   (slot tipo)
   (multislot persona1)
-  (multislot persona2)
-)
+  (multislot persona2))
 
 (deffacts personas
 	(mujer "Maria del Rosario Montes Roldan")
@@ -58,57 +57,58 @@
 	)
 
 (deffacts matrimonios
-	(casado "Maria del Rosario Montes Roldan" "Juan Jose Aguilera Garcia")
 	(casado "Jose Montes Roldan" "Josefa Luque Caniadas")
 	(casado "Manuel Montes Roldan" "Aurora Reyes Zuheros")
-	(casado "Victoria Zuheros Calvo" "Jose Reyes Peralvarez")
-	(casado "Josefa Zuheros Calvo" "Santiago Gonzalez Torres")
 	(casado "Alonso Zuheros Calvo" "Maria del Carmen Montes Roldan")
 	(casado "Juan Jose Aguilera Garcia" "Maria del Rosario Montes Roldan")
-	(casado "Josefa Luque Caniadas" "Jose Montes Roldan" )
-	(casado "Aurora Reyes Zuheros"  "Manuel Montes Roldan")
 	(casado "Jose Reyes Peralvarez"  "Victoria Zuheros Calvo")
-	(casado "Santiago Gonzalez Torres"  "Josefa Zuheros Calvo" )
-	(casado  "Maria del Carmen Montes Roldan" "Alonso Zuheros Calvo" )
-)
+	(casado "Santiago Gonzalez Torres"  "Josefa Zuheros Calvo" ))
+
+#################################################################################
 
 (defrule es_matrimonio
 		(casado ?casado1 ?casado2)
+    (mujer ?casado2)
 		=>
-		(assert(Relacion (tipo "esposo")(persona1 ?casado1)(persona2 ?casado2))
-		       )
-	)
+		(assert (Relacion (tipo "esposo")(persona1 ?casado1)(persona2 ?casado2))
+            (Relacion (tipo "esposa")(persona1 ?casado2)(persona2 ?casado1))))
+
+(defrule son_hermanas
+	(hij_de ?padremadre ?hija1)
+	(hij_de ?padremadre ?hija2)
+	(test (neq ?hija1 ?hija2))
+  (mujer ?hija1)
+	=>
+	(assert (Relacion (tipo "hermana")(persona1 ?hija1)(persona2 ?hija2))))
 
 (defrule son_hermanos
 	(hij_de ?padremadre ?hijo1)
 	(hij_de ?padremadre ?hijo2)
 	(test (neq ?hijo1 ?hijo2))
+  (hombre ?hijo1)
 	=>
-	(assert (Relacion (tipo "hermano")(persona1 ?hijo1)(persona2 ?hijo2)))
-)
+	(assert (Relacion (tipo "hermano")(persona1 ?hijo1)(persona2 ?hijo2))))
 
 (defrule es_hijo
 			(casado ?casado1 ?casado2)
 	    (hij_de ?casado1 ?hijo)
 			(hombre ?hijo)
-			(hombre ?casado1)
 			=>
 			(assert (Relacion (tipo "hijo")(persona1 ?hijo)(persona2 ?casado1))
 		        	(Relacion (tipo "hijo")(persona1 ?hijo)(persona2 ?casado2))
 							(Relacion (tipo "padre")(persona1 ?casado1)(persona2 ?hijo))
-							(Relacion (tipo "madre")(persona1 ?casado2)(persona2 ?hijo)))
-)
+							(Relacion (tipo "madre")(persona1 ?casado2)(persona2 ?hijo))))
+
 (defrule es_hija
 			(casado ?casado1 ?casado2)
 	    (hij_de ?casado1 ?hija)
 			(mujer ?hija)
-			(hombre ?casado1)
 			=>
 			(assert (Relacion (tipo "hija")(persona1 ?hija)(persona2 ?casado1))
 		        	(Relacion (tipo "hija")(persona1 ?hija)(persona2 ?casado2))
 							(Relacion (tipo "padre")(persona1 ?casado1)(persona2 ?hija))
-							(Relacion (tipo "madre")(persona1 ?casado2)(persona2 ?hija)))
-)
+							(Relacion (tipo "madre")(persona1 ?casado2)(persona2 ?hija))))
+
 #################################################################################
 
 (defrule pedirPrimerNombre	=>
