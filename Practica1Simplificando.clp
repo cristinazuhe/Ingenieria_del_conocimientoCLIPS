@@ -126,6 +126,58 @@
     =>
     (assert (Relacion (tipo "primo")(persona1 ?primo1)(persona2 ?primo2))))
 
+
+(defrule es_sobrina_tia
+  (mujer ?sobrina)
+	(hij_de ?herman1 ?sobrina)
+  (herman_de ?herman2 ?herman1)
+  (mujer ?herman2)
+  (casado ?casado1 ?herman2)
+  =>
+  (assert (Relacion (tipo "sobrina")(persona1 ?sobrina)(persona2 ?herman2))
+          (Relacion (tipo "sobrina")(persona1 ?sobrina)(persona2 ?casado1))
+          (Relacion (tipo "tia")(persona1 ?herman2)(persona2 ?sobrina))
+          (Relacion (tipo "tio")(persona1 ?casado1)(persona2 ?sobrina))))
+
+(defrule es_sobrina_tio
+(mujer ?sobrina)
+(hij_de ?herman1 ?sobrina)
+(herman_de ?herman2 ?herman1)
+(hombre ?herman2)
+(casado ?herman2 ?casado1)
+=>
+(assert (Relacion (tipo "sobrina")(persona1 ?sobrina)(persona2 ?herman2))
+        (Relacion (tipo "sobrina")(persona1 ?sobrina)(persona2 ?casado1))
+        (Relacion (tipo "tio")(persona1 ?herman2)(persona2 ?sobrina))
+        (Relacion (tipo "tia")(persona1 ?casado1)(persona2 ?sobrina))))
+
+
+(defrule es_sobrino_tia
+  (hombre ?sobrino)
+        	(hij_de ?herman1 ?sobrino)
+          (herman_de ?herman2 ?herman1)
+          (mujer ?herman2)
+          (casado ?casado1 ?herman2)
+          =>
+          (assert (Relacion (tipo "sobrino")(persona1 ?sobrino)(persona2 ?herman2))
+                  (Relacion (tipo "sobrino")(persona1 ?sobrino)(persona2 ?casado1))
+                  (Relacion (tipo "tia")(persona1 ?herman2)(persona2 ?sobrino))
+                  (Relacion (tipo "tio")(persona1 ?casado1)(persona2 ?sobrino))))
+
+(defrule es_sobrino_tio
+        (hombre ?sobrino)
+        (hij_de ?herman1 ?sobrino)
+        (herman_de ?herman2 ?herman1)
+        (hombre ?herman2)
+        (casado ?herman2 ?casado1)
+        =>
+        (assert (Relacion (tipo "sobrino")(persona1 ?sobrino)(persona2 ?herman2))
+                (Relacion (tipo "sobrino")(persona1 ?sobrino)(persona2 ?casado1))
+                (Relacion (tipo "tio")(persona1 ?herman2)(persona2 ?sobrino))
+                (Relacion (tipo "tia")(persona1 ?casado1)(persona2 ?sobrino))))
+
+
+
 #################################################################################
 #################################################################################
 
