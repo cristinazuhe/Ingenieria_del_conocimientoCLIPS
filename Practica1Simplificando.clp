@@ -68,7 +68,6 @@
 
 (defrule es_matrimonio
 		(casado ?casado1 ?casado2)
-    (mujer ?casado2)
 		=>
 		(assert (Relacion (tipo "esposo")(persona1 ?casado1)(persona2 ?casado2))
             (Relacion (tipo "esposa")(persona1 ?casado2)(persona2 ?casado1))))
@@ -79,7 +78,8 @@
 	(test (neq ?hija1 ?hija2))
   (mujer ?hija1)
 	=>
-	(assert (Relacion (tipo "hermana")(persona1 ?hija1)(persona2 ?hija2))))
+	(assert (Relacion (tipo "hermana")(persona1 ?hija1)(persona2 ?hija2)))
+	(assert (herman_de ?hija1 ?hija2)))
 
 (defrule son_hermanos
 	(hij_de ?padremadre ?hijo1)
@@ -87,7 +87,8 @@
 	(test (neq ?hijo1 ?hijo2))
   (hombre ?hijo1)
 	=>
-	(assert (Relacion (tipo "hermano")(persona1 ?hijo1)(persona2 ?hijo2))))
+	(assert (Relacion (tipo "hermano")(persona1 ?hijo1)(persona2 ?hijo2)))
+	(assert (herman_de ?hijo1 ?hijo2)))
 
 (defrule es_hijo
 			(casado ?casado1 ?casado2)
@@ -97,7 +98,8 @@
 			(assert (Relacion (tipo "hijo")(persona1 ?hijo)(persona2 ?casado1))
 		        	(Relacion (tipo "hijo")(persona1 ?hijo)(persona2 ?casado2))
 							(Relacion (tipo "padre")(persona1 ?casado1)(persona2 ?hijo))
-							(Relacion (tipo "madre")(persona1 ?casado2)(persona2 ?hijo))))
+							(Relacion (tipo "madre")(persona1 ?casado2)(persona2 ?hijo)))
+      (assert (hij_de ?casado2 ?hijo)))
 
 (defrule es_hija
 			(casado ?casado1 ?casado2)
@@ -107,8 +109,24 @@
 			(assert (Relacion (tipo "hija")(persona1 ?hija)(persona2 ?casado1))
 		        	(Relacion (tipo "hija")(persona1 ?hija)(persona2 ?casado2))
 							(Relacion (tipo "padre")(persona1 ?casado1)(persona2 ?hija))
-							(Relacion (tipo "madre")(persona1 ?casado2)(persona2 ?hija))))
+							(Relacion (tipo "madre")(persona1 ?casado2)(persona2 ?hija)))
+      (assert (hij_de ?casado2 ?hija)))
 
+(defrule son_primas
+    (Relacion (tipo "hija")(persona1 ?prima1)(persona2 ?herman1))
+    (herman_de ?herman1 ?herman2)
+    (hij_de ?herman2 ?prima2)
+    =>
+    (assert (Relacion (tipo "prima")(persona1 ?prima1)(persona2 ?prima2))))
+
+(defrule son_primos
+    (Relacion (tipo "hijo")(persona1 ?primo1)(persona2 ?herman1))
+    (herman_de ?herman1 ?herman2)
+    (hij_de ?herman2 ?primo2)
+    =>
+    (assert (Relacion (tipo "primo")(persona1 ?primo1)(persona2 ?primo2))))
+
+#################################################################################
 #################################################################################
 
 (defrule pedirPrimerNombre	=>
