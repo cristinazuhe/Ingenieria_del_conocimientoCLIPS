@@ -62,7 +62,9 @@
 	(casado "Alonso Zuheros Calvo" "Maria del Carmen Montes Roldan")
 	(casado "Juan Jose Aguilera Garcia" "Maria del Rosario Montes Roldan")
 	(casado "Jose Reyes Peralvarez"  "Victoria Zuheros Calvo")
-	(casado "Santiago Gonzalez Torres"  "Josefa Zuheros Calvo" ))
+	(casado "Santiago Gonzalez Torres"  "Josefa Zuheros Calvo" )
+  (casado "Pedro Zuheros Sanchez" "Antonia Calvo Gonzalez")
+  (casado "Manuel Montes Sanchez" "Aurora Roldan Rodriguez"))
 
 #################################################################################
 
@@ -176,6 +178,38 @@
                 (Relacion (tipo "tio")(persona1 ?herman2)(persona2 ?sobrino))
                 (Relacion (tipo "tia")(persona1 ?casado1)(persona2 ?sobrino))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;ABUELOS/ABUELAS/NIETOS/NIETAS;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule es_abuelo_nieto
+    (hij_de ?nombre3 ?nombre1)
+    (hij_de ?nombre2 ?nombre3)
+    (hombre ?nombre2)  (hombre ?nombre1)
+    =>
+    (assert (Relacion (tipo "abuelo")(persona1 ?nombre2)(persona2 ?nombre1))
+            (Relacion (tipo "nieto")(persona1 ?nombre1)(persona2 ?nombre2))))
+
+(defrule es_abuela_nieto
+    (hij_de ?nombre3 ?nombre1)
+    (hij_de ?nombre2 ?nombre3)
+    (mujer ?nombre2)  (hombre ?nombre1)
+    =>
+    (assert (Relacion (tipo "abuela")(persona1 ?nombre2)(persona2 ?nombre1))
+            (Relacion (tipo "nieto")(persona1 ?nombre1)(persona2 ?nombre2))))
+
+(defrule es_abuelo_nieta
+    (hij_de ?nombre3 ?nombre1)
+    (hij_de ?nombre2 ?nombre3)
+    (hombre ?nombre2)  (mujer ?nombre1)
+    =>
+    (assert (Relacion (tipo "abuelo")(persona1 ?nombre2)(persona2 ?nombre1))
+            (Relacion (tipo "nieta")(persona1 ?nombre1)(persona2 ?nombre2))))
+
+(defrule es_abuela_nieta
+    (hij_de ?nombre3 ?nombre1)
+    (hij_de ?nombre2 ?nombre3)
+    (mujer ?nombre2)  (mujer ?nombre1)
+    =>
+    (assert (Relacion (tipo "abuela")(persona1 ?nombre2)(persona2 ?nombre1))
+            (Relacion (tipo "nieta")(persona1 ?nombre1)(persona2 ?nombre2))))
 
 
 #################################################################################
