@@ -66,14 +66,14 @@
   (casado "Pedro Zuheros Sanchez" "Antonia Calvo Gonzalez")
   (casado "Manuel Montes Sanchez" "Aurora Roldan Rodriguez"))
 
-#################################################################################
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MATRIMONIOS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule es_matrimonio
 		(casado ?casado1 ?casado2)
 		=>
 		(assert (Relacion (tipo "esposo")(persona1 ?casado1)(persona2 ?casado2))
             (Relacion (tipo "esposa")(persona1 ?casado2)(persona2 ?casado1))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;HERMANOS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule son_hermanas
 	(hij_de ?padremadre ?hija1)
 	(hij_de ?padremadre ?hija2)
@@ -92,6 +92,7 @@
 	(assert (Relacion (tipo "hermano")(persona1 ?hijo1)(persona2 ?hijo2)))
 	(assert (herman_de ?hijo1 ?hijo2)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;HIJOS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule es_hijo
 			(casado ?casado1 ?casado2)
 	    (hij_de ?casado1 ?hijo)
@@ -114,6 +115,7 @@
 							(Relacion (tipo "madre")(persona1 ?casado2)(persona2 ?hija)))
       (assert (hij_de ?casado2 ?hija)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PRIMOS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule son_primas
     (Relacion (tipo "hija")(persona1 ?prima1)(persona2 ?herman1))
     (herman_de ?herman1 ?herman2)
@@ -128,7 +130,7 @@
     =>
     (assert (Relacion (tipo "primo")(persona1 ?primo1)(persona2 ?primo2))))
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;TIOS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule es_sobrina_tia
   (mujer ?sobrina)
 	(hij_de ?herman1 ?sobrina)
@@ -142,17 +144,16 @@
           (Relacion (tipo "tio")(persona1 ?casado1)(persona2 ?sobrina))))
 
 (defrule es_sobrina_tio
-(mujer ?sobrina)
-(hij_de ?herman1 ?sobrina)
-(herman_de ?herman2 ?herman1)
-(hombre ?herman2)
-(casado ?herman2 ?casado1)
-=>
-(assert (Relacion (tipo "sobrina")(persona1 ?sobrina)(persona2 ?herman2))
-        (Relacion (tipo "sobrina")(persona1 ?sobrina)(persona2 ?casado1))
-        (Relacion (tipo "tio")(persona1 ?herman2)(persona2 ?sobrina))
-        (Relacion (tipo "tia")(persona1 ?casado1)(persona2 ?sobrina))))
-
+    (mujer ?sobrina)
+    (hij_de ?herman1 ?sobrina)
+    (herman_de ?herman2 ?herman1)
+    (hombre ?herman2)
+    (casado ?herman2 ?casado1)
+    =>
+    (assert (Relacion (tipo "sobrina")(persona1 ?sobrina)(persona2 ?herman2))
+            (Relacion (tipo "sobrina")(persona1 ?sobrina)(persona2 ?casado1))
+            (Relacion (tipo "tio")(persona1 ?herman2)(persona2 ?sobrina))
+            (Relacion (tipo "tia")(persona1 ?casado1)(persona2 ?sobrina))))
 
 (defrule es_sobrino_tia
   (hombre ?sobrino)
@@ -178,7 +179,7 @@
                 (Relacion (tipo "tio")(persona1 ?herman2)(persona2 ?sobrino))
                 (Relacion (tipo "tia")(persona1 ?casado1)(persona2 ?sobrino))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;ABUELOS/ABUELAS/NIETOS/NIETAS;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ABUELOS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule es_abuelo_nieto
     (hij_de ?nombre3 ?nombre1)
     (hij_de ?nombre2 ?nombre3)
@@ -212,9 +213,7 @@
             (Relacion (tipo "nieta")(persona1 ?nombre1)(persona2 ?nombre2))))
 
 
-#################################################################################
-#################################################################################
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule pedirPrimerNombre	=>
 	(printout t "Escriba el nombre de la primera persona: " crlf )
 	(bind ?PrimerNombre (read) )
@@ -227,10 +226,6 @@
 		(assert (buscorelacioncon2 ?SegundoNombre))
 )
 
-
-##############################################################
-################### Relacion:###################
-##############################################################
 (defrule BuscoRelacion
 	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
