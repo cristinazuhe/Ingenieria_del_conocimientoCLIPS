@@ -212,6 +212,38 @@
     (assert (Relacion (tipo "abuela")(persona1 ?nombre2)(persona2 ?nombre1))
             (Relacion (tipo "nieta")(persona1 ?nombre1)(persona2 ?nombre2))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;SUEGROS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule es_yerno_suegra
+	(casado ?nombre1 ?nombre3)
+	(hij_de ?nombre2 ?nombre3)
+  (mujer ?nombre2)
+	=>
+  (assert (Relacion (tipo "yerno")(persona1 ?nombre1)(persona2 ?nombre2))
+          (Relacion (tipo "suegra")(persona1 ?nombre2)(persona2 ?nombre1))))
+
+(defrule es_yerno_suegro
+	(casado ?nombre1 ?nombre3)
+	(hij_de ?nombre2 ?nombre3)
+  (hombre ?nombre2)
+	=>
+  (assert (Relacion (tipo "yerno")(persona1 ?nombre1)(persona2 ?nombre2))
+          (Relacion (tipo "suegro")(persona1 ?nombre2)(persona2 ?nombre1))))
+
+(defrule es_nuera_suegro
+	(casado ?nombre1 ?nombre3)
+	(hij_de ?nombre2 ?nombre1)
+  (hombre ?nombre2)
+	=>
+  (assert (Relacion (tipo "nuera")(persona1 ?nombre3)(persona2 ?nombre2))
+          (Relacion (tipo "suegro")(persona1 ?nombre2)(persona2 ?nombre3))))
+
+(defrule es_nuera_suegra
+	(casado ?nombre1 ?nombre3)
+	(hij_de ?nombre2 ?nombre1)
+  (mujer ?nombre2)
+	=>
+  (assert (Relacion (tipo "nuera")(persona1 ?nombre3)(persona2 ?nombre2))
+          (Relacion (tipo "suegra")(persona1 ?nombre2)(persona2 ?nombre3))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule pedirPrimerNombre	=>
