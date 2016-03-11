@@ -31,8 +31,7 @@
 	(mujer "Josefa Luque Caniadas")
 	(mujer "Aurora Reyes Zuheros")
 	(hombre "Jose Reyes Peralvarez")
-	(hombre "Santiago Gonzalez Torres")
-	)
+	(hombre "Santiago Gonzalez Torres"))
 
 (deffacts hijs
 	(hij_de "Alonso Zuheros Calvo" "Cristina Zuheros Montes")
@@ -53,8 +52,7 @@
 	(hij_de "Manuel Montes Sanchez" "Maria del Carmen Montes Roldan")
 	(hij_de "Pedro Zuheros Sanchez" "Alonso Zuheros Calvo")
 	(hij_de "Pedro Zuheros Sanchez" "Victoria Zuheros Calvo")
-	(hij_de "Pedro Zuheros Sanchez" "Josefa Zuheros Calvo")
-	)
+	(hij_de "Pedro Zuheros Sanchez" "Josefa Zuheros Calvo")	)
 
 (deffacts matrimonios
 	(casado "Jose Montes Roldan" "Josefa Luque Caniadas")
@@ -245,23 +243,57 @@
   (assert (Relacion (tipo "nuera")(persona1 ?nombre3)(persona2 ?nombre2))
           (Relacion (tipo "suegra")(persona1 ?nombre2)(persona2 ?nombre3))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;CUÑADOS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule son_cuniados_hna_hna
+  (casado ?nombre1 ?nombre2)
+	(herman_de ?nombre2 ?nombre4)
+  (casado ?nombre3 ?nombre4)
+	=>
+  (assert (Relacion (tipo "cuniado")(persona1 ?nombre1)(persona2 ?nombre4))
+          (Relacion (tipo "cuniado")(persona1 ?nombre1)(persona2 ?nombre3))
+          (Relacion (tipo "cuniado")(persona1 ?nombre3)(persona2 ?nombre2))
+          (Relacion (tipo "cuniado")(persona1 ?nombre3)(persona2 ?nombre1))
+          (Relacion (tipo "cuniada")(persona1 ?nombre2)(persona2 ?nombre3))
+          (Relacion (tipo "cuniada")(persona1 ?nombre4)(persona2 ?nombre1))))
+
+(defrule son_cuniados_hno_hno
+  (casado ?nombre1 ?nombre2)
+	(herman_de ?nombre1 ?nombre3)
+  (casado ?nombre3 ?nombre4)
+	=>
+  (assert (Relacion (tipo "cuniada")(persona1 ?nombre2)(persona2 ?nombre4))
+          (Relacion (tipo "cuniada")(persona1 ?nombre2)(persona2 ?nombre3))
+          (Relacion (tipo "cuniada")(persona1 ?nombre4)(persona2 ?nombre2))
+          (Relacion (tipo "cuniada")(persona1 ?nombre4)(persona2 ?nombre1))
+          (Relacion (tipo "cuniado")(persona1 ?nombre3)(persona2 ?nombre2))
+          (Relacion (tipo "cuniado")(persona1 ?nombre1)(persona2 ?nombre4))))
+
+(defrule son_cuniados_hno_hna
+  (casado ?nombre1 ?nombre2)
+	(herman_de ?nombre1 ?nombre4)
+  (casado ?nombre3 ?nombre4)
+	=>
+  (assert (Relacion (tipo "cuniada")(persona1 ?nombre2)(persona2 ?nombre4))
+          (Relacion (tipo "cuniada")(persona1 ?nombre2)(persona2 ?nombre3))
+          (Relacion (tipo "cuniado")(persona1 ?nombre3)(persona2 ?nombre1))
+          (Relacion (tipo "cuniado")(persona1 ?nombre3)(persona2 ?nombre2))
+          (Relacion (tipo "cuniado")(persona1 ?nombre1)(persona2 ?nombre3))
+          (Relacion (tipo "cuniada")(persona1 ?nombre4)(persona2 ?nombre2))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule pedirPrimerNombre	=>
 	(printout t "Escriba el nombre de la primera persona: " crlf )
 	(bind ?PrimerNombre (read) )
-	(assert (buscorelacioncon1 ?PrimerNombre))
-)
+	(assert (buscorelacioncon1 ?PrimerNombre)))
 
 (defrule pedirSegundoNombre		=>
 		(printout t crlf "Escriba el nombre de la segunda persona: " crlf )
 		(bind ?SegundoNombre (read) )
-		(assert (buscorelacioncon2 ?SegundoNombre))
-)
+		(assert (buscorelacioncon2 ?SegundoNombre)))
 
 (defrule BuscoRelacion
 	(buscorelacioncon1 ?nombre1)
 	(buscorelacioncon2 ?nombre2)
 	(Relacion (tipo ?rel)(persona1 ?nombre1)(persona2 ?nombre2))
 	=>
-	(printout t crlf ?nombre1 " es "?rel" de " ?nombre2 crlf)
-)
+	(printout t crlf ?nombre1 " es "?rel" de " ?nombre2 crlf))
