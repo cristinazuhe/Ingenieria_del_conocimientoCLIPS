@@ -13,8 +13,5 @@
 (defrule Cuenta
    (ContarHechos  ?AContar)
    =>
-   (bind ?count 0)
-   (do-for-all-facts ((?f ?AContar)) TRUE
-      (bind ?count (+ ?count 1)))
-   (assert (NumeroHechos (hecho ?AContar)(n_veces ?count)))
+   (assert (NumeroHechos (hecho ?AContar)(n_veces (length (find-all-facts ((?f ?AContar)) TRUE)))))
 )
