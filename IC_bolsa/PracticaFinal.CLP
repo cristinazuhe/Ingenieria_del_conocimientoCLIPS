@@ -59,7 +59,7 @@
 ;;VALORES INESTABLES
 ;;;;;;;;;;;;;;;;;;;;
 (defrule valorInestable1
-   (declare(salience 15))
+   (declare(salience 19))
    (Empresas
       (Nombre ?nombre)
       (Sector Construccion))
@@ -69,11 +69,10 @@
 )
 
 (defrule valorInestable2
-   (declare(salience 15))
+   (declare(salience 19))
    (Sector
       (Nombre Ibex)
       (Var5Dias ?cantidad))
-  ; (< 2 3)
    (Empresas
       (Nombre ?nombre)
       (Sector Servicios))
@@ -84,20 +83,29 @@
    )
 )
 
-;;*******************************
-;;MÓDULO DE DETECCION DE VALORES PELIGROSOS**
-;;*******************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;MÓDULO 1: DETECCION DE VALORES PELIGROSOS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule valorPeligroso1
+  (declare(salience 18))
+  (Cartera (Empresa ?nombre))
+  (ValorInestable ?nombre)
+  (Empresas
+     (Nombre ?nombre)
+     (Perd3Dias true))
+  =>
+  (assert (ValorPeligroso ?nombre))
+)
 
-;;A continuación se definirán las reglas a tomar con los valores peligrosos.
-
-;;Regla que nos dará los valores peligrosos tras 3 días seguidos bajando. (Deben ser inestables)
-;(defrule Peligrosos3Dias
-
-;)
-
-
-;;Regla que nos dará los valores peligrosos tras estar 5 días seguidos bajando.
-;;Hay que comprobar que bajen respecto a su valor, su sector o el valor total del IBEX35.
-;(defrule Peligrosos5Dias
-
-;)
+(defrule valorPeligroso2
+  (declare(salience 18))
+  (Cartera (Empresa ?nombre))
+  (Empresas
+     (Nombre ?nombre)
+     (Perd5Dias true)
+     (VarSector5Dias ?valsec))
+  =>
+  (if (< ?valsec -5) then
+  (assert (ValorPeligroso ?nombre))
+  )
+)
