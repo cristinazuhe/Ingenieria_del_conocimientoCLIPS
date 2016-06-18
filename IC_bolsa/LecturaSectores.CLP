@@ -1,22 +1,3 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;DEFINIMOS LAS ESTRUCTURAS DE TRABAJO
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(deftemplate Sector
-  (slot Nombre)
-  (slot Variacion)
-  (slot Capitalizacion)
-  (slot PERMedio)
-  (slot RPDMedio)
-  (slot PorcentIBEX)
-  (slot Var5Dias)
-  (slot Perd3Dias)
-  (slot Perd5Dias)
-  (slot VarMes)
-  (slot VarTrimestre)
-  (slot VarSemestre)
-  (slot VarInterAnual)
-)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;LEEMOS LOS DATOS DEL FICHERO ANALISIS_SECTORES.TXT
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

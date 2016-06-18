@@ -1,28 +1,4 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;DEFINIMOS LAS ESTRUCTURAS DE TRABAJO
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(deftemplate Empresas
-  (slot Nombre)
-  (slot Precio)
-  (slot Variacion)
-  (slot Capitalizacion)
-  (slot PER)
-  (slot RPD)
-  (slot Tamanio)
-  (slot PorcentIBEX)
-  (slot EtiquetaPER)
-  (slot EtiquetaRPD)
-  (slot Sector)
-  (slot Var5Dias)
-  (slot Perd3Dias)
-  (slot Perd5Dias)
-  (slot VarSector5Dias)
-  (slot VRSS)
-  (slot VarMes)
-  (slot VarTrimestre)
-  (slot VarSemestre)
-  (slot VarInterAnual)
-)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;LEEMOS LOS DATOS DEL FICHERO ANALISIS.TXT

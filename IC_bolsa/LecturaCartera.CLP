@@ -1,12 +1,3 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;DEFINIMOS LAS ESTRUCTURAS DE TRABAJO
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(deftemplate Cartera
-  (slot Empresa)
-  (slot Acciones)
-  (slot ValorActual)
-)
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;LEEMOS LOS DATOS DE LA CARTERA DEL USUARIO
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
