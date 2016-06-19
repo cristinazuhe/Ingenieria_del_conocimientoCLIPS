@@ -173,20 +173,57 @@
 ;;MÓDULO 3: DETECCION DE VALORES INFRAVALORADOS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;Empresa general;;;;;;;;;;;;;;;;
-;(defrule valorInfravalorados1
-;  (declare(salience 17))
-;  (Empresas
-;     (Nombre ?nombre)
-;     (EtiquetaPER Bajo)
-;     (EtiquetaRPD Alto))
-;  =>
-;  (assert (ValorInfravalorado ?nombre))
-;)
-;(defrule valorInfravalorados2
-;  (declare(salience 16))
-;  (Empresas
-;     (Nombre ?nombre)
-;     (EtiquetaPER Bajo))
-;  =>
-;  (assert (ValorInfravalorado ?nombre))
-;)
+(defrule valorInfravalorados1
+  (declare(salience 16))
+  (Empresas
+     (Nombre ?nombre)
+     (EtiquetaPER Bajo)
+     (EtiquetaRPD Alto))
+  =>
+  (assert (ValorInfravalorado ?nombre))
+  (printout t ?nombre " es un valor infravalorado. Regla 1." crlf )
+)
+
+(defrule valorInfravalorados2
+  (declare(salience 16))
+  (Empresas
+     (Nombre ?nombre)
+     (EtiquetaPER Bajo)
+     (VarMes ?varciacionMes)
+     (VarTrimestre ?var3)
+     (VarSemestre ?var6)
+     (VarAnual ?var12))
+  =>
+  (if (> ?varciacionMes 0) then
+    (if (< ?var3 -30) then
+     (assert (ValorInfravalorado ?nombre))
+     (printout t ?nombre " es un valor infravalorado. Regla 2. Condicion Trimestre" crlf )
+    )
+    (if (< ?var6 -30) then
+     (assert (ValorInfravalorado ?nombre))
+     (printout t ?nombre " es un valor infravalorado. Regla 2. Condicion Semestre" crlf )
+    )
+    (if (< ?var12 -30) then
+     (assert (ValorInfravalorado ?nombre))
+     (printout t ?nombre " es un valor infravalorado. Regla 2. Condicion Anual" crlf )
+    )
+  )
+)
+
+(defrule valorInfravalorados3
+  (declare(salience 16))
+  (Empresas
+     (Nombre ?nombre)
+     (Tamanio GRANDE)
+     (EtiquetaRPD Alto)
+     (EtiquetaPER Medio)
+     (VarMes ?varMes)      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;¿ESTA VARIABLE O VAR5??
+     (VarSector5Dias ?varSector))
+  =>
+  (if (> ?varSector 0) then
+    (if (> ?varMes 0) then
+      (assert (ValorInfravalorado ?nombre))
+      (printout t ?nombre " es un valor infravalorado. Regla 3." crlf )
+    )
+  )
+)
