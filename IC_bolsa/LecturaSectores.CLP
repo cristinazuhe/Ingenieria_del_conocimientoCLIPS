@@ -47,7 +47,7 @@
 )
 
 (defrule closefileSector
-  (declare(salience 10))
+  (declare(salience 1))
   =>
   (close file1)
 )

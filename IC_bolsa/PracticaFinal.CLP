@@ -43,6 +43,11 @@
   (slot Acciones)
   (slot ValorActual)
 )
+(deftemplate Noticia
+  (slot Nombre)
+  (slot Tipo)
+  (slot Antiguedad)
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;LEEMOS LOS DATOS DE ANALISIS, ANALISIS SECTORES Y LA CARTERA DEL USUARIO
@@ -53,6 +58,7 @@
   (load "LecturaEmpresa.CLP")
   (load "LecturaSectores.CLP")
   (load "LecturaCartera.CLP")
+  ;CARGARRRRRRRRRRRRRR NOTICIASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 )
 
 ;;;;;;;;;;;;;;;;;;;;
@@ -83,11 +89,23 @@
    )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 6;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule valorInestable3
+   (declare(salience 18))
+   ?f <- (ValorInestable ?nombre)
+   (Noticia
+     (Nombre Ibex)
+     (Tipo Negativa))
+   =>
+   (retract ?f)
+   (printout t ?nombre " es un valor estable. Regla 3." crlf )
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;MÓDULO 1: DETECCION DE VALORES PELIGROSOS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule valorPeligroso1
-  (declare(salience 18))
+  (declare(salience 12))
   (Cartera (Nombre ?nombre))
   (ValorInestable ?nombre)
   (Empresas
@@ -98,7 +116,7 @@
 )
 
 (defrule valorPeligroso2
-  (declare(salience 18))
+  (declare(salience 12))
   (Cartera (Nombre ?nombre))
   (Empresas
      (Nombre ?nombre)
@@ -115,7 +133,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;Empresa general;;;;;;;;;;;;;;;;
 (defrule valorSobrevalorados1
-  (declare(salience 17))
+  (declare(salience 11))
   (Empresas
      (Nombre ?nombre)
      (EtiquetaPER Alto)
@@ -126,7 +144,7 @@
 
 ;;;;;;;;;;;;;;;;;;;Empresa pequenia;;;;;;;;;;;;;;;
 (defrule valorSobrevalorados2
-  (declare(salience 17))
+  (declare(salience 11))
   (or (Empresas
         (Nombre ?nombre)
         (Tamanio PEQUENIA)
@@ -143,7 +161,7 @@
 
 ;;;;;;;;;;;;;;;;;;Empresa grande;;;;;;;;;;;;;;;;;;;
 (defrule valorSobrevalorados3
-  (declare(salience 17))
+  (declare(salience 11))
   (Empresas
      (Nombre ?nombre)
      (Tamanio GRANDE)
@@ -159,7 +177,7 @@
 )
 
 (defrule valorSobrevalorados4
-  (declare(salience 17))
+  (declare(salience 11))
   (Empresas
      (Nombre ?nombre)
      (Tamanio GRANDE)
@@ -174,7 +192,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;Empresa general;;;;;;;;;;;;;;;;
 (defrule valorInfravalorados1
-  (declare(salience 16))
+  (declare(salience 10))
   (Empresas
      (Nombre ?nombre)
      (EtiquetaPER Bajo)
@@ -185,7 +203,7 @@
 )
 
 (defrule valorInfravalorados2
-  (declare(salience 16))
+  (declare(salience 10))
   (Empresas
      (Nombre ?nombre)
      (EtiquetaPER Bajo)
@@ -211,7 +229,7 @@
 )
 
 (defrule valorInfravalorados3
-  (declare(salience 16))
+  (declare(salience 10))
   (Empresas
      (Nombre ?nombre)
      (Tamanio GRANDE)
@@ -225,5 +243,27 @@
       (assert (ValorInfravalorado ?nombre))
       (printout t ?nombre " es un valor infravalorado. Regla 3." crlf )
     )
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;MÓDULO 4: REALIZACION DE PROPUESTAS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule propuesta1
+  (ValorPeligroso ?nombre)
+  (Empresas
+      (Nombre ?nombre)
+      (VarMes ?varMes)
+      (Sector ?nombreSector)
+      (RPD ?miRPD))
+  (Sector
+      (Nombre ?nombreSector)
+      (VarMes ?varMesSector))
+  =>
+  (if (< ?varMes 0) then
+      (if (< (- ?varMes ?varMesSector) -3) then
+        (assert (PropuestaPeligrosa ?nombre (- 20 ?miRPD)))
+        (printout t ?nombre " peligroso. Propuesta peligrosa 1." crlf )
+      )
   )
 )

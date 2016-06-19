@@ -63,7 +63,7 @@
 )
 
 (defrule closefileEmpresas
-  (declare(salience 10))
+  (declare(salience 1))
   =>
   (close file)
 )

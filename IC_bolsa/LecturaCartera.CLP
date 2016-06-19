@@ -29,7 +29,7 @@
 )
 
 (defrule closefileCartera
-  (declare(salience 10))
+  (declare(salience 1))
   =>
   (close file2)
 )
