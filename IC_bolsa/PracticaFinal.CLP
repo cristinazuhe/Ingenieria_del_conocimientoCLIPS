@@ -109,3 +109,74 @@
   (assert (ValorPeligroso ?nombre))
   )
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;MÓDULO 2: DETECCION DE VALORES SOBREVALORADOS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;Empresa general;;;;;;;;;;;;;;;;
+(defrule valorSobrevalorados1
+  (declare(salience 17))
+  (Empresas
+     (Nombre ?nombre)
+     (EtiquetaPER Alto)
+     (EtiquetaRPD Bajo))
+  =>
+  (assert (ValorInSobrevalorado ?nombre))
+)
+
+;;;;;;;;;;;;;;;;;;;Empresa pequenia;;;;;;;;;;;;;;;
+(defrule valorSobrevalorados2
+  (declare(salience 17))
+  (or (Empresas
+        (Nombre ?nombre)
+        (Tamanio PEQUENIA)
+        (EtiquetaPER Alto))
+      (Empresas
+        (Nombre ?nombre)
+        (Tamanio PEQUENIA)
+        (EtiquetaPER Medio)
+        (EtiquetaRPD Bajo))
+  )
+  =>
+  (assert (ValorInSobrevalorado ?nombre))
+)
+
+;;;;;;;;;;;;;;;;;;Empresa grande;;;;;;;;;;;;;;;;;;;
+(defrule valorSobrevalorados3
+  (declare(salience 17))
+  (Empresas
+     (Nombre ?nombre)
+     (Tamanio GRANDE)
+     (EtiquetaRPD Bajo)
+     (EtiquetaPER ?miPER))
+  =>
+  (if (= (str-compare ?miPER "Medio") 0) then
+          (assert (ValorInSobrevalorado ?nombre))
+  )
+  (if (= (str-compare ?miPER "Alto") 0) then
+          (assert (ValorInSobrevalorado ?nombre))
+  )
+)
+
+(defrule valorSobrevalorados4
+  (declare(salience 17))
+  (Empresas
+     (Nombre ?nombre)
+     (Tamanio GRANDE)
+     (EtiquetaRPD Medio)
+     (EtiquetaPER Alto))
+  =>
+     (assert (ValorInSobrevalorado ?nombre))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;MÓDULO 3: DETECCION DE VALORES INFRAVALORADOS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;(defrule valorInfravalorados2
+;  (declare(salience 16))
+;  (Empresas
+;     (Nombre ?nombre)
+;     (EtiquetaPER Bajo))
+;  =>
+;  (assert (ValorInfravalorado ?nombre))
+;)
