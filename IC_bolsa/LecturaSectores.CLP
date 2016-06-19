@@ -29,7 +29,7 @@
   (bind ?valor13 (read file1))
   (assert (Sector
     (Nombre ?valor1)
-    (Variacion ?valor2)
+    (VariacionDia ?valor2)
     (Capitalizacion ?valor3)
     (PERMedio ?valor4)
     (RPDMedio ?valor5)
@@ -40,7 +40,7 @@
     (VarMes ?valor10)
     (VarTrimestre ?valor11)
     (VarSemestre ?valor12)
-    (VarInterAnual ?valor13)
+    (VarAnual ?valor13)
     ))
     (assert (SeguirLeyendo1))
   )

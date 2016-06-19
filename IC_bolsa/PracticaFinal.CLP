@@ -4,7 +4,7 @@
 (deftemplate Empresas
   (slot Nombre)
   (slot Precio)
-  (slot Variacion)
+  (slot VariacionDia)
   (slot Capitalizacion)
   (slot PER)
   (slot RPD)
@@ -17,15 +17,15 @@
   (slot Perd3Dias)
   (slot Perd5Dias)
   (slot VarSector5Dias)
-  (slot VRSS)
+  (slot VRS5)
   (slot VarMes)
   (slot VarTrimestre)
   (slot VarSemestre)
-  (slot VarInterAnual)
+  (slot VarAnual)
 )
 (deftemplate Sector
   (slot Nombre)
-  (slot Variacion)
+  (slot VariacionDia)
   (slot Capitalizacion)
   (slot PERMedio)
   (slot RPDMedio)
@@ -36,10 +36,10 @@
   (slot VarMes)
   (slot VarTrimestre)
   (slot VarSemestre)
-  (slot VarInterAnual)
+  (slot VarAnual)
 )
 (deftemplate Cartera
-  (slot Empresa)
+  (slot Nombre)
   (slot Acciones)
   (slot ValorActual)
 )
@@ -88,7 +88,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule valorPeligroso1
   (declare(salience 18))
-  (Cartera (Empresa ?nombre))
+  (Cartera (Nombre ?nombre))
   (ValorInestable ?nombre)
   (Empresas
      (Nombre ?nombre)
@@ -99,7 +99,7 @@
 
 (defrule valorPeligroso2
   (declare(salience 18))
-  (Cartera (Empresa ?nombre))
+  (Cartera (Nombre ?nombre))
   (Empresas
      (Nombre ?nombre)
      (Perd5Dias true)

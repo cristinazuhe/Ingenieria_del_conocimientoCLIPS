@@ -20,7 +20,7 @@
   (bind ?valor2 (read file2))
   (bind ?valor3 (read file2))
   (assert (Cartera
-    (Empresa ?valor1)
+    (Nombre ?valor1)
     (Acciones ?valor2)
     (ValorActual ?valor3)
     ))
