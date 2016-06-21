@@ -17,7 +17,7 @@
   (if (neq ?valor1 EOF) then
   (bind ?valor2 (read file3))
   (bind ?valor3 (read file3))
-  (assert (Cartera
+  (assert (Noticia
     (Nombre ?valor1)
     (Tipo ?valor2)
     (Antiguedad ?valor3)

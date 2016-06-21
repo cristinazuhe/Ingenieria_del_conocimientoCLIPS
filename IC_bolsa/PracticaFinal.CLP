@@ -49,6 +49,7 @@
   (slot Antiguedad)
 )
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;LEEMOS LOS DATOS DE ANALISIS, ANALISIS SECTORES Y LA CARTERA DEL USUARIO
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -58,7 +59,7 @@
   (load "LecturaEmpresa.CLP")
   (load "LecturaSectores.CLP")
   (load "LecturaCartera.CLP")
-  ;CARGARRRRRRRRRRRRRR NOTICIASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+  (load "LecturaNoticias.CLP")
 )
 
 ;;;;;;;;;;;;;;;;;;;;
@@ -89,16 +90,90 @@
    )
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 6;;;;;;;;;;;;;;;;;;;;;;;;
-(defrule valorInestable3
-   (declare(salience 18))
-   ?f <- (ValorInestable ?nombre)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 3;;;;;;;;;;;;;;;;;;
+;;SI HAY UNA NOTICIA BUENA SOBRE LA EMPRESA, SERÁ ESTABLE.
+;(defrule valorInestable4
+;   (declare(salience 13))
+;   ?f <- (ValorInestable ?nombre)
+;   (Noticia
+;     (Nombre ?nombre)
+;     (Tipo Buena))
+;   (Empresas
+;         (Nombre ?nombre))
+;   =>
+;   (retract ?f)
+;   (printout t ?nombre " ahora es un valor ESTABLE . Regla 3." crlf )
+;)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 4;;;;;;;;;;;;;;;;;;
+;;SI HAY UNA NOTICIA MALA SOBRE LA EMPRESA, SERÁ INESTABLE.
+(defrule valorInestable5
+   (declare(salience 14))
    (Noticia
-     (Nombre Ibex)
-     (Tipo Negativa))
+     (Nombre ?nombre)
+     (Tipo Mala))
+   (Empresas
+      (Nombre ?nombre))
+   (not(ValorInestable ?nombre))
    =>
-   (retract ?f)
-   (printout t ?nombre " es un valor estable. Regla 3." crlf )
+   (assert (ValorInestable ?nombre))
+   (printout t ?nombre " es un valor INESTABLE . Regla 4." crlf )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 3;;;;;;;;;;;;;;;;;;
+;;SI HAY UNA NOTICIA BUENA SOBRE EL SECTOR, SERÁ ESTABLE.
+;(defrule valorInestable3
+;    (declare(salience 15))
+;    ?f1 <- (SeguirLeyendo)
+;    ?f <- (ValorInestable ?nombre)
+;    (Noticia
+;      (Nombre ?nombreSector)
+;      (Tipo Buena))
+;    (Empresas
+;          (Nombre ?nombre)
+;          (Sector ?nombreSector))
+;    =>
+;    (retract ?f1)
+;    (retract ?f)
+;    (printout t ?nombre " ahora es un valor ESTABLE . Regla 3." crlf )
+;    (assert (SeguirLeyendo2))
+;)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 5;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;SI HAY UNA NOTICIA MALA SOBRE UN SECTOR, LAS DE ESE SECTOR SERÁN INESTABLES.
+(defrule valorInestable6
+   (declare(salience 16))
+   (Noticia
+     (Nombre ?nombreSector)
+     (Tipo Mala))
+   (Sector
+      (Nombre ?nombreSector))
+   (Empresas
+     (Nombre ?nombre)
+     (Sector ?nombreSector))
+   (not(ValorInestable ?nombre))
+   =>
+   (assert (ValorInestable ?nombre))
+   (printout t ?nombre " es un valor INESTABLE . Regla 5." crlf )
+  ; (assert (Seguir))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 6;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;SI HAY UNA NOTICIA MALA SOBRE LA ECONOMIA, TODAS SERÁN INESTABLES.
+(defrule valorInestable7
+   (declare(salience 17))
+   (Noticia
+     (Nombre IBEX)
+     (Tipo Mala))
+   (Empresas
+     (Nombre ?nombre))
+   (not(ValorInestable ?nombre))
+   =>
+      (assert (ValorInestable ?nombre))
+    ;  (assert (Seguir))
+      (printout t ?nombre " es un valor INESTABLE . Regla 6." crlf )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
