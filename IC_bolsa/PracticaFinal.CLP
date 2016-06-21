@@ -165,7 +165,7 @@
 (defrule valorInestable7
    (declare(salience 17))
    (Noticia
-     (Nombre IBEX)
+     (Nombre Ibex)
      (Tipo Mala))
    (Empresas
      (Nombre ?nombre))
@@ -337,8 +337,31 @@
   =>
   (if (< ?varMes 0) then
       (if (< (- ?varMes ?varMesSector) -3) then
-        (assert (PropuestaPeligrosa ?nombre (- 20 ?miRPD)))
-        (printout t ?nombre " peligroso. Propuesta peligrosa 1." crlf )
+        (assert (VenderPeligrosa ?nombre (- 20 ?miRPD)))
+        (printout t ?nombre " peligroso. Propuesta1." crlf )
       )
   )
+)
+
+(defrule propuesta2
+  (ValorInfravalorado ?nombre)
+  (Empresas
+    (Nombre ?nombre)
+    (PER ?miPER)
+    (RPD ?miRPD))
+  (Cartera
+    (Nombre DISPONIBLE)
+    (Acciones ?cantidadDisponible))
+  (Sector
+    (Nombre Ibex)
+    (PERMedio ?PERIbex))
+  =>
+    (if (> ?miPER 0) then
+      (assert (InvertirInfraValorada ?nombre (+ (/ (* (- ?PERIbex ?miPER) 100) (* 5 ?miPER) ) ?miRPD) ))
+      (printout t ?cantidadDisponible " dinero disponible. Propuesta2." crlf )
+    )
+    (if (= ?miPER 0) then
+      (assert (InvertirInfraValorada ?nombre ?miRPD ))
+      (printout t ?cantidadDisponible " dinero disponible. Propuesta2." crlf )
+    )
 )

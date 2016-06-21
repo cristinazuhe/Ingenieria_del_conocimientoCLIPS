@@ -4,7 +4,7 @@
 ;IBERDROLA Buena 2
 ;GAS_NATURAL Buena 2
 REPSOL Buena 2
-IBEX Mala 1    ;para problar regla 6
+Ibex Mala 1    ;para problar regla 6
 Energia Mala 2  ;para probar regla 5
 FCC Buena 2 ;para probar regla 3
 Servicios Buena 1 ;para probar regla 3
