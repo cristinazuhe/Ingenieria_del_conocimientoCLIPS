@@ -62,9 +62,9 @@
   (load "LecturaNoticias.CLP")
 )
 
-;;;;;;;;;;;;;;;;;;;;
-;;VALORES INESTABLES
-;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;VALORES INESTABLES;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule valorInestable1
    (declare(salience 19))
    (Empresas
@@ -72,7 +72,7 @@
       (Sector Construccion))
    =>
    (assert (ValorInestable ?nombre))
-   (printout t ?nombre " es un valor inestable por pertenecer a Construiccion." crlf )
+   (printout t ?nombre " -------- valor INESTABLE. Regla 1." crlf )
 )
 
 (defrule valorInestable2
@@ -86,65 +86,31 @@
    =>
    (if (< ?cantidad 0) then
        (assert (ValorInestable ?nombre))
-       (printout t "La economia esta bajando y "?nombre " es un valor inestable por pertenecer a Servicios." crlf )
+       (printout t ?nombre " --------valor INESTABLE. Regla 2" crlf )
    )
 )
 
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 3;;;;;;;;;;;;;;;;;;
-;;SI HAY UNA NOTICIA BUENA SOBRE LA EMPRESA, SERÁ ESTABLE.
-;(defrule valorInestable4
-;   (declare(salience 13))
-;   ?f <- (ValorInestable ?nombre)
-;   (Noticia
-;     (Nombre ?nombre)
-;     (Tipo Buena))
-;   (Empresas
-;         (Nombre ?nombre))
-;   =>
-;   (retract ?f)
-;   (printout t ?nombre " ahora es un valor ESTABLE . Regla 3." crlf )
-;)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 4;;;;;;;;;;;;;;;;;;
-;;SI HAY UNA NOTICIA MALA SOBRE LA EMPRESA, SERÁ INESTABLE.
-(defrule valorInestable5
-   (declare(salience 14))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 6. Ibex;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;SI HAY UNA NOTICIA MALA SOBRE LA ECONOMIA, TODAS SERÁN INESTABLES.
+(defrule valorInestable3
+   (declare(salience 17))
+   (not (Etapas paso1Fin))
    (Noticia
-     (Nombre ?nombre)
+     (Nombre Ibex)
      (Tipo Mala))
    (Empresas
-      (Nombre ?nombre))
+     (Nombre ?nombre))
    (not(ValorInestable ?nombre))
    =>
-   (assert (ValorInestable ?nombre))
-   (printout t ?nombre " es un valor INESTABLE . Regla 4." crlf )
+      (assert (ValorInestable ?nombre))
+      (printout t ?nombre " -------- valor INESTABLE . Regla 6." crlf )
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 3;;;;;;;;;;;;;;;;;;
-;;SI HAY UNA NOTICIA BUENA SOBRE EL SECTOR, SERÁ ESTABLE.
-;(defrule valorInestable3
-;    (declare(salience 15))
-;    ?f1 <- (SeguirLeyendo)
-;    ?f <- (ValorInestable ?nombre)
-;    (Noticia
-;      (Nombre ?nombreSector)
-;      (Tipo Buena))
-;    (Empresas
-;          (Nombre ?nombre)
-;          (Sector ?nombreSector))
-;    =>
-;    (retract ?f1)
-;    (retract ?f)
-;    (printout t ?nombre " ahora es un valor ESTABLE . Regla 3." crlf )
-;    (assert (SeguirLeyendo2))
-;)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 5;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 5. M_S;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;SI HAY UNA NOTICIA MALA SOBRE UN SECTOR, LAS DE ESE SECTOR SERÁN INESTABLES.
-(defrule valorInestable6
+(defrule valorInestable4
    (declare(salience 16))
+   (not (Etapas paso1Fin))
    (Noticia
      (Nombre ?nombreSector)
      (Tipo Mala))
@@ -156,29 +122,66 @@
    (not(ValorInestable ?nombre))
    =>
    (assert (ValorInestable ?nombre))
-   (printout t ?nombre " es un valor INESTABLE . Regla 5." crlf )
-  ; (assert (Seguir))
+   (printout t ?nombre " -------- valor INESTABLE . Regla 5." crlf )
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 6;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;SI HAY UNA NOTICIA MALA SOBRE LA ECONOMIA, TODAS SERÁN INESTABLES.
-(defrule valorInestable7
-   (declare(salience 17))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 3. B_Sectores;;;;;;;;;;;;;;;;;;
+;;SI HAY UNA NOTICIA BUENA SOBRE EL SECTOR, SERÁ ESTABLE.
+(defrule valorInestable5
+    (declare(salience 15))
+    (not (Etapas paso2Fin))
+    ?f <- (ValorInestable ?nombre)
+    (Noticia
+      (Nombre ?nombreSector)
+      (Tipo Buena))
+    (Empresas
+          (Nombre ?nombre)
+          (Sector ?nombreSector))
+    =>
+    (assert (Etapas paso1Fin))
+    (retract ?f)
+    (printout t ?nombre " -------- valor ESTABLE . Regla 3 Sector." crlf )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 4 M_E;;;;;;;;;;;;;;;;;;
+;;SI HAY UNA NOTICIA MALA SOBRE LA EMPRESA, SERÁ INESTABLE.
+(defrule valorInestable6
+   (declare(salience 14))
+   (not (Etapas paso3Fin))
    (Noticia
-     (Nombre Ibex)
+     (Nombre ?nombre)
      (Tipo Mala))
    (Empresas
-     (Nombre ?nombre))
+      (Nombre ?nombre))
    (not(ValorInestable ?nombre))
    =>
-      (assert (ValorInestable ?nombre))
-    ;  (assert (Seguir))
-      (printout t ?nombre " es un valor INESTABLE . Regla 6." crlf )
+   (assert (Etapas paso2Fin))
+   (assert (ValorInestable ?nombre))
+   (printout t ?nombre " -------- valor INESTABLE . Regla 4." crlf )
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;MÓDULO 1: DETECCION DE VALORES PELIGROSOS
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 3. B_Empresa;;;;;;;;;;;;;;;;;;
+;;SI HAY UNA NOTICIA BUENA SOBRE LA EMPRESA, SERÁ ESTABLE.
+(defrule valorInestable7
+   (declare(salience 13))
+   ?f <- (ValorInestable ?nombre)
+   (Noticia
+     (Nombre ?nombre)
+     (Tipo Buena))
+   (Empresas
+         (Nombre ?nombre))
+   =>
+   (assert (Etapas paso3Fin))
+   (retract ?f)
+   (printout t ?nombre " -------- valor ESTABLE . Regla 3." crlf )
+)
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MÓDULO 1: DETECCION DE VALORES PELIGROSOS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule valorPeligroso1
   (declare(salience 12))
   (Cartera (Nombre ?nombre))
@@ -203,9 +206,9 @@
   )
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;MÓDULO 2: DETECCION DE VALORES SOBREVALORADOS
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MÓDULO 2: DETECCION DE VALORES SOBREVALORADOS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;Empresa general;;;;;;;;;;;;;;;;
 (defrule valorSobrevalorados1
   (declare(salience 11))
@@ -262,9 +265,9 @@
      (assert (ValorSobrevalorado ?nombre))
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;MÓDULO 3: DETECCION DE VALORES INFRAVALORADOS
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MÓDULO 3: DETECCION DE VALORES INFRAVALORADOS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;Empresa general;;;;;;;;;;;;;;;;
 (defrule valorInfravalorados1
   (declare(salience 10))
@@ -274,7 +277,6 @@
      (EtiquetaRPD Alto))
   =>
   (assert (ValorInfravalorado ?nombre))
-  (printout t ?nombre " es un valor infravalorado. Regla 1." crlf )
 )
 
 (defrule valorInfravalorados2
@@ -316,14 +318,13 @@
   (if (> ?varSector 0) then
     (if (> ?varMes 0) then
       (assert (ValorInfravalorado ?nombre))
-      (printout t ?nombre " es un valor infravalorado. Regla 3." crlf )
     )
   )
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;MÓDULO 4: REALIZACION DE PROPUESTAS
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MÓDULO 4: REALIZACION DE PROPUESTAS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule propuesta1
   (ValorPeligroso ?nombre)
   (Empresas
