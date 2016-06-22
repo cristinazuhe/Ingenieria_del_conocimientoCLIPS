@@ -422,6 +422,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Me quedo con las 5 mejores propuestas;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defglobal ?*contador_max* = 0)
+(defglobal ?*contador_propuestas* = 1)
 (defrule Busco5MejoresPropuestas
   (declare(salience 8))
   ?f <- (BuscoMejoresPropuestas)
@@ -439,4 +440,23 @@
   (if (> ?*contador_max* 4) then   ;Si ya tengo las 5 mejores, elimino las PropuestasPeores (las sigo teniendo en Propuestas)
      (retract ?a)
   )
+)
+
+(defrule PropongoAUsuario
+   (declare(salience 7))
+   (PropuestasMejores ?nombre)
+   (Propuesta
+      (NombreEmpresa ?nombre)
+      (TipoPropuesta ?tipoPropuesta)
+      (RE ?miRE)
+      (NombreSector ?nombreSector)
+      (Explicacion ?explicacion)
+   )
+   =>
+   (printout t "********************************* PROPUESTA " ?*contador_propuestas* "********************************" crlf)
+   (printout t "Para la empresa " ?nombre " del sector " ?nombreSector " tenemos una propuesta de " ?tipoPropuesta " ." crlf)
+   (printout t "Explicacion: " ?explicacion crlf)
+   (printout t "El rendimiento esperado es de " ?miRE crlf)
+   (printout t crlf)
+   (bind ?*contador_propuestas* (+ ?*contador_propuestas* 1))
 )
