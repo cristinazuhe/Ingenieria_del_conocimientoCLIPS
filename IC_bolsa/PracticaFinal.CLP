@@ -49,6 +49,14 @@
   (slot Antiguedad)
 )
 
+(deftemplate Propuesta
+  (slot NombreEmpresa)
+  (slot TipoPropuesta)
+  (slot RE)
+  (slot NombreSector)
+  (multislot Explicacion)
+)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;LEEMOS LOS DATOS DE ANALISIS, ANALISIS SECTORES Y LA CARTERA DEL USUARIO
@@ -338,7 +346,8 @@
   =>
   (if (< ?varMes 0) then
       (if (< (- ?varMes ?varMesSector) -3) then
-        (assert (VenderPeligrosa ?nombre (- 20 ?miRPD)))
+        (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Vender")
+                           (RE (- 20 ?miRPD)) (Explicacion "La empresa es peligrosa por..........;")) )
         (printout t ?nombre " peligroso. Propuesta1." crlf )
       )
   )
@@ -349,7 +358,8 @@
   (Empresas
     (Nombre ?nombre)
     (PER ?miPER)
-    (RPD ?miRPD))
+    (RPD ?miRPD)
+    (Sector ?nombreSector))
   (Cartera
     (Nombre DISPONIBLE)
     (Acciones ?cantidadDisponible))
@@ -357,12 +367,16 @@
     (Nombre Ibex)
     (PERMedio ?PERIbex))
   =>
-    (if (> ?miPER 0) then
-      (assert (InvertirInfraValorada ?nombre (+ (/ (* (- ?PERIbex ?miPER) 100) (* 5 ?miPER) ) ?miRPD) ))
-      (printout t ?cantidadDisponible " dinero disponible. Propuesta2." crlf )
-    )
-    (if (= ?miPER 0) then
-      (assert (InvertirInfraValorada ?nombre ?miRPD ))
-      (printout t ?cantidadDisponible " dinero disponible. Propuesta2." crlf )
-    )
+   (if (> ?cantidadDisponible 0 ) then
+     (if (> ?miPER 0) then
+       (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Invertir")
+               (RE (+ (/ (* (- ?PERIbex ?miPER) 100) (* 5 ?miPER) ) ?miRPD))
+               (Explicacion "Esta empresa esta infravalorada...") ))
+     )
+     (if (= ?miPER 0) then
+     (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Invertir")
+             (RE ?miRPD)
+             (Explicacion "Esta empresa esta infravalorada...") ))
+     )
+   )
 )
