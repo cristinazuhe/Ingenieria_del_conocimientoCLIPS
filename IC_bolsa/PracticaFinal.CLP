@@ -56,6 +56,9 @@
   (slot NombreSector)
   (multislot Explicacion)
 )
+(deftemplate PropuestasPeores
+  (slot NombreEmpresa)
+  (slot RE))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -68,6 +71,7 @@
   (load "LecturaSectores.CLP")
   (load "LecturaCartera.CLP")
   (load "LecturaNoticias.CLP")
+  (assert (BuscoMejoresPropuestas))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -331,9 +335,10 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MÓDULO 4: REALIZACION DE PROPUESTAS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MÓDULO 4.1 REALIZACION DE PROPUESTAS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule propuesta1
+  (declare(salience 9))
   (ValorPeligroso ?nombre)
   (Empresas
       (Nombre ?nombre)
@@ -348,12 +353,14 @@
       (if (< (- ?varMes ?varMesSector) -3) then
         (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Vender")
                            (RE (- 20 ?miRPD)) (Explicacion "La empresa es peligrosa por..........;")) )
+        (assert (PropuestasPeores (NombreEmpresa ?nombre)  (RE (- 20 ?miRPD)) ) )
         (printout t ?nombre " peligroso. Propuesta1." crlf )
       )
   )
 )
 
 (defrule propuesta2
+  (declare(salience 9))
   (ValorInfravalorado ?nombre)
   (Empresas
     (Nombre ?nombre)
@@ -372,11 +379,64 @@
        (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Invertir")
                (RE (+ (/ (* (- ?PERIbex ?miPER) 100) (* 5 ?miPER) ) ?miRPD))
                (Explicacion "Esta empresa esta infravalorada...") ))
+       (assert (PropuestasPeores (NombreEmpresa ?nombre) (RE (+ (/ (* (- ?PERIbex ?miPER) 100) (* 5 ?miPER) ) ?miRPD)) ))
      )
      (if (= ?miPER 0) then
      (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Invertir")
              (RE ?miRPD)
              (Explicacion "Esta empresa esta infravalorada...") ))
+     (assert (PropuestasPeores (NombreEmpresa ?nombre) (RE ?miRPD)  ))
      )
    )
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PENDIENTE lo que he preguntado!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+;(defrule propuesta3
+;    (Cartera
+;      (Nombre ?nombre))
+;    (ValorSobrevalorado ?nombre)
+;    (Empresas
+;      (Nombre ?nombre)
+;      )
+;)
+
+;(defrule propuesta4
+;   (Empresas
+;      (Nombre ?empresa1)
+;      (RPD ?RDP1))
+;   (not (ValorSobrevalorado ?empresa1))
+;   (Empresas
+;      (Nombre ?empresa2)
+;      (RPD ?RPD2))
+;   (not (ValorInfravalorado ?empresa2))
+;   (Cartera
+;      (Nombre ?empresa2))
+;
+;   =>
+;      (printout t ?empresa1 " holiiiiiiiiiiiiii. Propuesta4." crlf )
+;)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MÓDULO 4.2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Me quedo con las 5 mejores propuestas;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defglobal ?*contador_max* = 0)
+(defrule Busco5MejoresPropuestas
+  (declare(salience 8))
+  ?f <- (BuscoMejoresPropuestas)
+  (PropuestasPeores (RE ?x))
+  (forall (PropuestasPeores (RE ?y)) (test (>= ?x ?y)))
+  ?a <- (PropuestasPeores (NombreEmpresa ?nombre) (RE ?x))
+  =>
+  (if (< ?*contador_max* 5) then
+     (retract ?f)
+     (retract ?a)
+     (bind ?*contador_max* (+ ?*contador_max* 1))
+     (assert (BuscoMejoresPropuestas))
+     (assert (PropuestasMejores ?nombre))
+  )
+  (if (> ?*contador_max* 4) then   ;Si ya tengo las 5 mejores, elimino las PropuestasPeores (las sigo teniendo en Propuestas)
+     (retract ?a)
+  )
 )
