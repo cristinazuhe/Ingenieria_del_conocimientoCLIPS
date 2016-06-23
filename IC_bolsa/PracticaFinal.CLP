@@ -422,7 +422,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Me quedo con las 5 mejores propuestas;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defglobal ?*contador_max* = 0)
-(defglobal ?*contador_propuestas* = 1)
 (defrule Busco5MejoresPropuestas
   (declare(salience 8))
   ?f <- (BuscoMejoresPropuestas)
@@ -435,7 +434,7 @@
      (retract ?a)
      (bind ?*contador_max* (+ ?*contador_max* 1))
      (assert (BuscoMejoresPropuestas))
-     (assert (PropuestasMejores ?nombre))
+     (assert (PropuestasMejores ?nombre ?*contador_max*))
   )
   (if (> ?*contador_max* 4) then   ;Si ya tengo las 5 mejores, elimino las PropuestasPeores (las sigo teniendo en Propuestas)
      (retract ?a)
@@ -444,7 +443,7 @@
 
 (defrule PropongoAUsuario
    (declare(salience 7))
-   (PropuestasMejores ?nombre)
+   (PropuestasMejores ?nombre ?numero)
    (Propuesta
       (NombreEmpresa ?nombre)
       (TipoPropuesta ?tipoPropuesta)
@@ -453,10 +452,49 @@
       (Explicacion ?explicacion)
    )
    =>
-   (printout t "********************************* PROPUESTA " ?*contador_propuestas* "********************************" crlf)
+   (printout t "********************************* PROPUESTA " ?numero "********************************" crlf)
    (printout t "Para la empresa " ?nombre " del sector " ?nombreSector " tenemos una propuesta de " ?tipoPropuesta " ." crlf)
    (printout t "Explicacion: " ?explicacion crlf)
    (printout t "El rendimiento esperado es de " ?miRE crlf)
    (printout t crlf)
-   (bind ?*contador_propuestas* (+ ?*contador_propuestas* 1))
+   (assert (PropuestasHechas))
+)
+
+(defrule EligeOpcionUsuario
+   (declare(salience 6))
+   ?f <- (PropuestasHechas)
+   =>
+   (printout t "********************************* PROPUESTA 0 ********************************" crlf)
+   (printout t "No realizar ninguna accion." crlf)
+   (printout t crlf)
+   (printout t "Eliga una de las propuestas indicadas (0, 1, 2, 3, 4 o 5): " crlf)
+   (bind ?Respuesta (explode$ (readline)))
+   (assert (OpcionElegida ?Respuesta))
+)
+
+(defrule RealizarEleccionUsuario
+    (declare(salience 5))
+    ?f <- (OpcionElegida ?Respuesta)
+    (PropuestasMejores ?nombreEmpresa ?Respuesta)
+    (Propuesta
+         (NombreEmpresa ?nombreEmpresa)
+         (TipoPropuesta ?tipo)
+         (RE ?miRE)
+         (NombreSector ?nombreSector)
+         (Explicacion ?explicacion))
+    (Cartera (Nombre ?nombreEmpresaCartera) (Acciones ?cantidadActual))
+    =>
+    (if (and (eq ?tipo "Invertir")(eq ?nombreEmpresaCartera DISPONIBLE)) then
+        (printout t " ¿Cuanto dinero quieres invertir? Tienes " ?cantidadActual " euros."  crlf)
+        (bind ?Respuesta (explode$ (readline)))
+        (assert (InvertirDineroCartera ?nombreEmpresa ?Respuesta))
+    )
+
+    (if (and (eq ?tipo "Vender")(eq ?nombreEmpresaCartera ?nombreEmpresa)) then
+        (printout t " ¿Cuantas acciones quieres vender de " ?nombreEmpresa "?. Tienes " ?cantidadActual " acciones." crlf )
+        (bind ?Respuesta (explode$ (readline)))
+        (assert (VenderAccionesCartera ?nombreEmpresa ?Respuesta))
+    )
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FALTA CAMBIAR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 )
