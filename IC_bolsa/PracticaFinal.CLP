@@ -407,29 +407,38 @@
       (PERMedio ?PERMedioSector))
     =>
     (if (< ( / (* 100 (- ?miPER ?PERMedioSector)) (* 5 ?miPER)   ) (+ 5 ?precio) ) then
-       (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Vender2")
+       (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Vender")
             (RE (+ (- 0 ?miRPD) (/ (- ?miPER ?PERMedioSector ) (* 5 ?miPER )) ) )
             (Explicacion "Esta empresa esta sobrevalorada...") ))
        (assert (PropuestasPeores (NombreEmpresa ?nombre) (RE (- ?miRPD (/ (- ?miPER ?PERMedioSector ) (* 5 ?miPER )) ) )  ))
     )
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PENDIENTE lo que he preguntado!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 (defrule propuesta4
     (declare(salience 9))
    (Empresas
       (Nombre ?empresa1)
-      (RPD ?RDP1))
+      (RPD ?RPD1))
    (not (ValorSobrevalorado ?empresa1))
    (Empresas
       (Nombre ?empresa2)
-      (RPD ?RPD2))
+      (RPD ?RPD2)
+      (PER ?PER2)
+      (Sector ?NombreSector2))
    (not (ValorInfravalorado ?empresa2))
    (Cartera
       (Nombre ?empresa2))
-
+    (Sector
+      (Nombre ?NombreSector2)
+      (PERMedio ?PERMedioSector2))
    =>
-      (printout t ?empresa1 " holiiiiiiiiiiiiii. Propuesta4." crlf )
+   (if (> ?RPD1 (+ ?RPD2 1) ) then ;;;;;;;;;;;;;;;;;;;;;;ME FALTA LA REVALORIZACION POR AÑO ESPERADO
+      (assert (Propuesta (NombreEmpresa ?empresa1) (NombreSector ?empresa2) (TipoPropuesta "Cambiar")
+                         (RE (- ?RPD1 (+ 1 (+ ?RPD2 ( / (* 100 (- ?PER2 ?PERMedioSector2)) (* 5 ?PER2)) ) )))
+                         (Explicacion ?empresa1 " debe tener una revalorizacion...") ))
+     (assert (PropuestasPeores (NombreEmpresa ?empresa1)
+                               (RE (- ?RPD1 (+ 1 (+ ?RPD2 ( / (* 100 (- ?PER2 ?PERMedioSector2)) (* 5 ?PER2)) ) )) )  ))
+    )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
