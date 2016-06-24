@@ -391,16 +391,31 @@
 )
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PENDIENTE lo que he preguntado!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-;(defrule propuesta3
-;    (Cartera
-;      (Nombre ?nombre))
-;    (ValorSobrevalorado ?nombre)
-;    (Empresas
-;      (Nombre ?nombre)
-;      )
-;)
+(defrule propuesta3
+    (declare(salience 9))
+    (Cartera
+      (Nombre ?nombre))
+    (ValorSobrevalorado ?nombre)
+    (Empresas
+      (Nombre ?nombre)
+      (Precio ?precio)
+      (PER ?miPER)
+      (RPD ?miRPD)
+      (Sector ?nombreSector))
+    (Sector
+      (Nombre ?nombreSector)
+      (PERMedio ?PERMedioSector))
+    =>
+          (printout t ?nombre " ENTRO POR PROPUESTA 3." crlf )
+    (if (< ( / (* 100 (- ?miPER ?PERMedioSector)) (* 5 ?miPER)   ) (+ 5 ?precio) ) then
+       (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Vender2")
+            (RE (- ?miRPD (/ (- ?miPER ?PERMedioSector ) (* 5 ?miPER )) ) )
+            (Explicacion "Esta empresa esta sobrevalorada...") ))
+       (assert (PropuestasPeores (NombreEmpresa ?nombre) (RE (- ?miRPD (/ (- ?miPER ?PERMedioSector ) (* 5 ?miPER )) ) )  ))
+    )
+)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PENDIENTE lo que he preguntado!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ;(defrule propuesta4
 ;   (Empresas
 ;      (Nombre ?empresa1)
