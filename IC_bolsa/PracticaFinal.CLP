@@ -406,31 +406,31 @@
       (Nombre ?nombreSector)
       (PERMedio ?PERMedioSector))
     =>
-          (printout t ?nombre " ENTRO POR PROPUESTA 3." crlf )
     (if (< ( / (* 100 (- ?miPER ?PERMedioSector)) (* 5 ?miPER)   ) (+ 5 ?precio) ) then
        (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Vender2")
-            (RE (- ?miRPD (/ (- ?miPER ?PERMedioSector ) (* 5 ?miPER )) ) )
+            (RE (+ (- 0 ?miRPD) (/ (- ?miPER ?PERMedioSector ) (* 5 ?miPER )) ) )
             (Explicacion "Esta empresa esta sobrevalorada...") ))
        (assert (PropuestasPeores (NombreEmpresa ?nombre) (RE (- ?miRPD (/ (- ?miPER ?PERMedioSector ) (* 5 ?miPER )) ) )  ))
     )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;PENDIENTE lo que he preguntado!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-;(defrule propuesta4
-;   (Empresas
-;      (Nombre ?empresa1)
-;      (RPD ?RDP1))
-;   (not (ValorSobrevalorado ?empresa1))
-;   (Empresas
-;      (Nombre ?empresa2)
-;      (RPD ?RPD2))
-;   (not (ValorInfravalorado ?empresa2))
-;   (Cartera
-;      (Nombre ?empresa2))
-;
-;   =>
-;      (printout t ?empresa1 " holiiiiiiiiiiiiii. Propuesta4." crlf )
-;)
+(defrule propuesta4
+    (declare(salience 9))
+   (Empresas
+      (Nombre ?empresa1)
+      (RPD ?RDP1))
+   (not (ValorSobrevalorado ?empresa1))
+   (Empresas
+      (Nombre ?empresa2)
+      (RPD ?RPD2))
+   (not (ValorInfravalorado ?empresa2))
+   (Cartera
+      (Nombre ?empresa2))
+
+   =>
+      (printout t ?empresa1 " holiiiiiiiiiiiiii. Propuesta4." crlf )
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MÓDULO 4.2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
