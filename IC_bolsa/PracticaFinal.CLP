@@ -507,17 +507,16 @@
          (RE ?miRE)
          (NombreSector ?nombreSector)
          (Explicacion ?explicacion))
-    (Cartera (Nombre ?nombreEmpresa) (Acciones ?cantidadActual))
     =>
     (if (eq ?tipo "Invertir") then
-        (printout t " ¿Cuantas acciones quieres comprar? Tienes " ?cantidadActual " acciones."  crlf)
+        (printout t " ¿Cuantas acciones quieres comprar de " ?nombreEmpresa "?." crlf)
         (bind ?Respuesta (explode$ (readline)))
         (assert (ComprarAcciones ?nombreEmpresa ?Respuesta))
         (retract ?f)
     )
 
     (if (eq ?tipo "Vender") then
-        (printout t " ¿Cuantas acciones quieres vender de " ?nombreEmpresa "?. Tienes " ?cantidadActual " acciones." crlf )
+        (printout t " ¿Cuantas acciones quieres vender de " ?nombreEmpresa "?." crlf)
         (bind ?Respuesta (explode$ (readline)))
         (assert (VenderAccionesCartera ?nombreEmpresa ?Respuesta))
         (retract ?f)
@@ -538,12 +537,18 @@
                   (Nombre DISPONIBLE)
                   (Acciones ?dinero))
       =>
-      (retract ?f)
-      (modify ?C1 (Acciones (- ?acciones ?Respuesta)) (ValorActual (- ?valorantiguo (* ?Respuesta (/ ?valorantiguo ?acciones)))))
-      (modify ?C2 (Acciones (+ ?dinero (* ?Respuesta (/ ?valorantiguo ?acciones))))
-                  (ValorActual ( + ?dinero (* ?Respuesta (/ ?valorantiguo ?acciones)))))
-      (printout t "Ha vendido " ?Respuesta " acciones de " ?nombreEmpresa ", ahora le quedan " (- ?acciones ?Respuesta) "."  crlf )
-      (printout t "Le queda " ( + ?dinero (* ?Respuesta (/ ?valorantiguo ?acciones))) " dinero disponible en la cartera." crlf)
+      (if (< ?Respuesta ?acciones) then
+        (retract ?f)
+        (modify ?C1 (Acciones (- ?acciones ?Respuesta)) (ValorActual (- ?valorantiguo (* ?Respuesta (/ ?valorantiguo ?acciones)))))
+        (modify ?C2 (Acciones (+ ?dinero (* ?Respuesta (/ ?valorantiguo ?acciones))))
+                    (ValorActual ( + ?dinero (* ?Respuesta (/ ?valorantiguo ?acciones)))))
+        (printout t "Ha vendido " ?Respuesta " acciones de " ?nombreEmpresa ", ahora le quedan " (- ?acciones ?Respuesta) "."  crlf )
+        (printout t "Le queda " ( + ?dinero (* ?Respuesta (/ ?valorantiguo ?acciones))) " dinero disponible en la cartera." crlf)
+      )
+      (if (>= ?Respuesta ?acciones) then
+        (retract ?f)
+        (printout t "No tienes tantas acciones para vender. " crlf)
+      )
 )
 
 (defrule RealizarInversionYaEnCartera
@@ -573,4 +578,28 @@
       (retract ?f)
       (printout t "No tiene dinero disponible para comprar tantas acciones." crlf)
    )
+)
+
+(defrule RealizarInversionNoEnCartera
+    (declare(salience 4))
+    ?f <- (ComprarAcciones ?nombreEmpresa ?Respuesta)
+    ?C2 <- (Cartera
+              (Nombre DISPONIBLE)
+              (Acciones ?dinero))
+   (Empresas
+            (Nombre ?nombreEmpresa)
+            (Precio ?precio))
+    =>
+    (if (> (- ?dinero (* ?Respuesta ?precio)) 0) then
+        (retract ?f)
+        (assert (Cartera (Nombre ?nombreEmpresa) (Acciones ?Respuesta) (ValorActual (* ?Respuesta ?precio))))
+        (modify ?C2 (Acciones (- ?dinero (* ?Respuesta ?precio)))
+                    (ValorActual ( + ?dinero (* ?Respuesta ?precio))))
+        (printout t "Ha comprado " ?Respuesta " acciones de " ?nombreEmpresa ", ahora tiene "  ?Respuesta "."  crlf )
+        (printout t "Le queda " ( - ?dinero (* ?Respuesta ?precio)) " dinero disponible en la cartera." crlf)
+    )
+    (if (<= (- ?dinero (* ?Respuesta ?precio)) 0) then
+       (retract ?f)
+       (printout t "No tiene dinero disponible para comprar tantas acciones." crlf)
+    )
 )
