@@ -51,13 +51,15 @@
 
 (deftemplate Propuesta
   (slot NombreEmpresa)
+  (slot NombreEmpresa2)
   (slot TipoPropuesta)
   (slot RE)
   (slot NombreSector)
-  (multislot Explicacion)
+  (slot Explicacion)
 )
 (deftemplate PropuestasPeores
   (slot NombreEmpresa)
+  (slot NombreEmpresa2)
   (slot RE))
 
 
@@ -415,7 +417,7 @@
 )
 
 (defrule propuesta4
-    (declare(salience 9))
+   (declare(salience 9))
    (Empresas
       (Nombre ?empresa1)
       (RPD ?RPD1))
@@ -424,7 +426,8 @@
       (Nombre ?empresa2)
       (RPD ?RPD2)
       (PER ?PER2)
-      (Sector ?NombreSector2))
+      (Sector ?NombreSector2)
+      (VarAnual ?var12))
    (not (ValorInfravalorado ?empresa2))
    (Cartera
       (Nombre ?empresa2))
@@ -432,12 +435,12 @@
       (Nombre ?NombreSector2)
       (PERMedio ?PERMedioSector2))
    =>
-   (if (> ?RPD1 (+ ?RPD2 1) ) then ;;;;;;;;;;;;;;;;;;;;;;ME FALTA LA REVALORIZACION POR AÑO ESPERADO
-      (assert (Propuesta (NombreEmpresa ?empresa1) (NombreSector ?empresa2) (TipoPropuesta "Cambiar")
-                         (RE (- ?RPD1 (+ 1 (+ ?RPD2 ( / (* 100 (- ?PER2 ?PERMedioSector2)) (* 5 ?PER2)) ) )))
-                         (Explicacion ?empresa1 " debe tener una revalorizacion...") ))
-     (assert (PropuestasPeores (NombreEmpresa ?empresa1)
-                               (RE (- ?RPD1 (+ 1 (+ ?RPD2 ( / (* 100 (- ?PER2 ?PERMedioSector2)) (* 5 ?PER2)) ) )) )  ))
+   (if (> ?RPD1 ( + (+ ?RPD2 1) ( + ?RPD2 ?var12))) then
+      (assert (Propuesta (NombreEmpresa ?empresa2) (NombreEmpresa2 ?empresa1)(NombreSector ?NombreSector2) (TipoPropuesta "Cambiar")
+                         (RE (- ?RPD1 (+ 1 (+ ?RPD2 (* ( + ?RPD2 ?var12)( / (* 100 (- ?PER2 ?PERMedioSector2)) (* 5 ?PER2))) ) )))
+                         (Explicacion "debe tener una revalorizacion...") ))
+      (assert (PropuestasPeores (NombreEmpresa ?empresa2) (NombreEmpresa2 ?empresa1)
+                               (RE (- ?RPD1 (+ 1 (+ ?RPD2 (* ( + ?RPD2 ?var12)( / (* 100 (- ?PER2 ?PERMedioSector2)) (* 5 ?PER2)) )) )) )  ))
     )
 )
 
@@ -451,14 +454,14 @@
   ?f <- (BuscoMejoresPropuestas)
   (PropuestasPeores (RE ?x))
   (forall (PropuestasPeores (RE ?y)) (test (>= ?x ?y)))
-  ?a <- (PropuestasPeores (NombreEmpresa ?nombre) (RE ?x))
+  ?a <- (PropuestasPeores (NombreEmpresa ?nombre) (NombreEmpresa2 ?nombre2) (RE ?x))
   =>
   (if (< ?*contador_max* 5) then
      (retract ?f)
      (retract ?a)
      (bind ?*contador_max* (+ ?*contador_max* 1))
      (assert (BuscoMejoresPropuestas))
-     (assert (PropuestasMejores ?nombre ?*contador_max*))
+     (assert (PropuestasMejores ?nombre ?nombre2 ?*contador_max*))
   )
   (if (> ?*contador_max* 4) then   ;Si ya tengo las 5 mejores, elimino las PropuestasPeores (las sigo teniendo en Propuestas)
      (retract ?a)
@@ -467,9 +470,10 @@
 
 (defrule PropongoAUsuario
    (declare(salience 7))
-   (PropuestasMejores ?nombre ?numero)
+   (PropuestasMejores ?nombre ?nombre2 ?numero)
    (Propuesta
       (NombreEmpresa ?nombre)
+      (NombreEmpresa2 ?nombre2)
       (TipoPropuesta ?tipoPropuesta)
       (RE ?miRE)
       (NombreSector ?nombreSector)
@@ -477,7 +481,7 @@
    )
    =>
    (printout t "********************************* PROPUESTA " ?numero "********************************" crlf)
-   (printout t "Para la empresa " ?nombre " del sector " ?nombreSector " tenemos una propuesta de " ?tipoPropuesta " ." crlf)
+   (printout t "Para la empresa " ?nombre " " ?nombre2 "  del sector " ?nombreSector " tenemos una propuesta de " ?tipoPropuesta " ." crlf)
    (printout t "Explicacion: " ?explicacion crlf)
    (printout t "El rendimiento esperado es de " ?miRE crlf)
    (printout t crlf)
@@ -500,9 +504,10 @@
 (defrule RealizarEleccionUsuario
     (declare(salience 5))
     ?f <- (OpcionElegida ?Respuesta)
-    (PropuestasMejores ?nombreEmpresa ?Respuesta)
+    (PropuestasMejores ?nombreEmpresa ?nombreEmpresa2 ?Respuesta)
     (Propuesta
          (NombreEmpresa ?nombreEmpresa)
+         (NombreEmpresa2 ?nombreEmpresa2)
          (TipoPropuesta ?tipo)
          (RE ?miRE)
          (NombreSector ?nombreSector)
@@ -521,8 +526,12 @@
         (assert (VenderAccionesCartera ?nombreEmpresa ?Respuesta))
         (retract ?f)
     )
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FALTA CAMBIAR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+    (if (eq ?tipo "Cambiar") then
+        (printout t " ¿Cuantas acciones quieres cambiar de " ?nombreEmpresa " a " ?nombreEmpresa2 "?." crlf)
+        (bind ?Respuesta (explode$ (readline)))
+        (assert (CambiarAccionesEmpresa ?nombreEmpresa ?nombreEmpresa2 ?Respuesta))
+        (retract ?f)
+    )
 )
 
 (defrule RealizarVenta
@@ -602,4 +611,11 @@
        (retract ?f)
        (printout t "No tiene dinero disponible para comprar tantas acciones." crlf)
     )
+)
+
+(defrule RealizarCambioAcciones
+    (declare(salience 4))
+    ?f <- (CambiarAccionesEmpresa ?nombreEmpresa ?nombreEmpresa2 ?Respuesta)
+    =>
+    (printout t "Voy a cmabiar " crlf )
 )
