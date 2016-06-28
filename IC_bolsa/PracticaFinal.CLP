@@ -546,7 +546,7 @@
                   (Nombre DISPONIBLE)
                   (Acciones ?dinero))
       =>
-      (if (< ?Respuesta ?acciones) then
+      (if (<= ?Respuesta ?acciones) then
         (retract ?f)
         (modify ?C1 (Acciones (- ?acciones ?Respuesta)) (ValorActual (- ?valorantiguo (* ?Respuesta (/ ?valorantiguo ?acciones)))))
         (modify ?C2 (Acciones (+ ?dinero (* ?Respuesta (/ ?valorantiguo ?acciones))))
@@ -554,7 +554,7 @@
         (printout t "Ha vendido " ?Respuesta " acciones de " ?nombreEmpresa ", ahora le quedan " (- ?acciones ?Respuesta) "."  crlf )
         (printout t "Le queda " ( + ?dinero (* ?Respuesta (/ ?valorantiguo ?acciones))) " dinero disponible en la cartera." crlf)
       )
-      (if (>= ?Respuesta ?acciones) then
+      (if (> ?Respuesta ?acciones) then
         (retract ?f)
         (printout t "No tienes tantas acciones para vender. " crlf)
       )
@@ -579,7 +579,7 @@
        (retract ?f)
        (modify ?C1 (Acciones (+ ?acciones ?Respuesta)) (ValorActual (+ ?valorantiguo (* ?Respuesta ?precio))))
        (modify ?C2 (Acciones (- ?dinero (* ?Respuesta ?precio)))
-                   (ValorActual ( + ?dinero (* ?Respuesta ?precio))))
+                   (ValorActual ( - ?dinero (* ?Respuesta ?precio))))
        (printout t "Ha comprado " ?Respuesta " acciones de " ?nombreEmpresa ", ahora tiene " (+ ?acciones ?Respuesta) "."  crlf )
        (printout t "Le queda " ( - ?dinero (* ?Respuesta ?precio)) " dinero disponible en la cartera." crlf)
    )
@@ -603,7 +603,7 @@
         (retract ?f)
         (assert (Cartera (Nombre ?nombreEmpresa) (Acciones ?Respuesta) (ValorActual (* ?Respuesta ?precio))))
         (modify ?C2 (Acciones (- ?dinero (* ?Respuesta ?precio)))
-                    (ValorActual ( + ?dinero (* ?Respuesta ?precio))))
+                    (ValorActual ( - ?dinero (* ?Respuesta ?precio))))
         (printout t "Ha comprado " ?Respuesta " acciones de " ?nombreEmpresa ", ahora tiene "  ?Respuesta "."  crlf )
         (printout t "Le queda " ( - ?dinero (* ?Respuesta ?precio)) " dinero disponible en la cartera." crlf)
     )
@@ -613,9 +613,51 @@
     )
 )
 
-(defrule RealizarCambioAcciones
+(defrule RealizarCambioAccionesYaEnCartera
     (declare(salience 4))
-    ?f <- (CambiarAccionesEmpresa ?nombreEmpresa ?nombreEmpresa2 ?Respuesta)
+    ?f <- (CambiarAccionesEmpresa ?nombreEmpresa1 ?nombreEmpresa2 ?Respuesta)
+    ?C1 <- (Cartera
+               (Nombre ?nombreEmpresa1)
+               (Acciones ?acciones1)
+               (ValorActual ?valor1))
+    ?C2 <- (Cartera
+               (Nombre ?nombreEmpresa2)
+               (Acciones ?acciones2)
+               (ValorActual ?valor2))
+    ?C3 <- (Cartera
+                (Nombre DISPONIBLE)
+                (Acciones ?dinero))
     =>
-    (printout t "Voy a cmabiar " crlf )
+  (retract ?f)
+  (if (<= ?Respuesta ?acciones1) then                                                 ;si tengo tantas acciones para cambiar...
+         (if (>= (/ ?valor1 ?acciones1) (/ ?valor2 ?acciones2) ) then                ;la primera empresa tiene un coste de acciones mayor...ganaré dinero disponible
+              (modify ?C1 (Acciones (- ?acciones1 ?Respuesta)) (ValorActual (- ?valor1 (* ?Respuesta (/ ?valor1 ?acciones1)))))
+              (modify ?C2 (Acciones (+ ?acciones2 ?Respuesta)) (ValorActual (+ ?valor2 (* ?Respuesta (/ ?valor2 ?acciones2)))))
+              (modify ?C3 (Acciones (+ ?dinero (- (* ?Respuesta (/ ?valor1 ?acciones1)) (* ?Respuesta (/ ?valor2 ?acciones2)) )))
+                          (ValorActual ( + ?dinero (- (* ?Respuesta (/ ?valor1 ?acciones1)) (* ?Respuesta (/ ?valor2 ?acciones2)) ) )))
+              (printout t "Ha vendido " ?Respuesta " acciones de " ?nombreEmpresa1 ", ahora tiene " (- ?acciones1 ?Respuesta) "."  crlf )
+              (printout t "Ha comprado " ?Respuesta " acciones de " ?nombreEmpresa2 ", ahora tiene " (+ ?acciones2 ?Respuesta) "."  crlf )
+              (printout t "Ahora tiene " (+ ?dinero (- (* ?Respuesta (/ ?valor1 ?acciones1)) (* ?Respuesta (/ ?valor2 ?acciones2)) ))
+                                       " dinero disponible en la cartera." crlf)
+          )
+          (if (< (/ ?valor1 ?acciones1) (/ ?valor2 ?acciones2) ) then                 ;la primera empresa tiene un coste de acciones menor...tendré que invertir dinero
+              (if (<= (- (* ?Respuesta (/ ?valor2 ?acciones2)) (* ?Respuesta (/ ?valor1 ?acciones1)) ) ?dinero ) then
+                    (modify ?C1 (Acciones (- ?acciones1 ?Respuesta)) (ValorActual (- ?valor1 (* ?Respuesta (/ ?valor1 ?acciones1)))))
+                    (modify ?C2 (Acciones (+ ?acciones2 ?Respuesta)) (ValorActual (+ ?valor2 (* ?Respuesta (/ ?valor2 ?acciones2)))))
+                    (modify ?C3 (Acciones (- ?dinero (- (* ?Respuesta (/ ?valor2 ?acciones2)) (* ?Respuesta (/ ?valor1 ?acciones1) ) ) ) )
+                                (ValorActual (- ?dinero (- (* ?Respuesta (/ ?valor2 ?acciones2)) (* ?Respuesta (/ ?valor1 ?acciones1) ) ) )))
+                    (printout t "Ha vendido " ?Respuesta " acciones de " ?nombreEmpresa1 ", ahora tiene " (- ?acciones1 ?Respuesta) "."  crlf )
+                    (printout t "Ha comprado " ?Respuesta " acciones de " ?nombreEmpresa2 ", ahora tiene " (+ ?acciones2 ?Respuesta) "."  crlf )
+                    (printout t "Le queda " (- ?dinero (- (* ?Respuesta (/ ?valor2 ?acciones2)) (* ?Respuesta (/ ?valor1 ?acciones1) ) ) )
+                                             " dinero disponible en la cartera." crlf)
+              )
+              (if (> (- (* ?Respuesta (/ ?valor2 ?acciones2)) (* ?Respuesta (/ ?valor1 ?acciones1)) ) ?dinero ) then
+                   (printout t "No tiene dinero suficiente para hacer dicho cambio de acciones." crlf)
+              )
+          )
+  )
+  (if (> ?Respuesta ?acciones1) then
+    (retract ?f)
+    (printout t "No tienes tantas acciones para vender. " crlf)
+  )
 )
