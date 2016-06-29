@@ -74,6 +74,7 @@
   (load "LecturaCartera.CLP")
   (load "LecturaNoticias.CLP")
   (assert (BuscoMejoresPropuestas))
+  (assert (HagoPropuestas))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -341,6 +342,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule propuesta1
   (declare(salience 9))
+  (HagoPropuestas)
   (ValorPeligroso ?nombre)
   (Empresas
       (Nombre ?nombre)
@@ -363,6 +365,7 @@
 
 (defrule propuesta2
   (declare(salience 9))
+  (HagoPropuestas)
   (ValorInfravalorado ?nombre)
   (Empresas
     (Nombre ?nombre)
@@ -395,6 +398,7 @@
 
 (defrule propuesta3
     (declare(salience 9))
+    (HagoPropuestas)
     (Cartera
       (Nombre ?nombre))
     (ValorSobrevalorado ?nombre)
@@ -418,6 +422,7 @@
 
 (defrule propuesta4
    (declare(salience 9))
+   (HagoPropuestas)
    (Empresas
       (Nombre ?empresa1)
       (RPD ?RPD1))
@@ -449,8 +454,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Me quedo con las 5 mejores propuestas;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defglobal ?*contador_max* = 0)
-(defrule Busco5MejoresPropuestas
   (declare(salience 8))
+  ?p <- (HagoPropuestas)
   ?f <- (BuscoMejoresPropuestas)
   (PropuestasPeores (RE ?x))
   (forall (PropuestasPeores (RE ?y)) (test (>= ?x ?y)))
@@ -465,6 +470,7 @@
   )
   (if (> ?*contador_max* 4) then   ;Si ya tengo las 5 mejores, elimino las PropuestasPeores (las sigo teniendo en Propuestas)
      (retract ?a)
+     (retract ?p)
   )
 )
 
@@ -533,6 +539,7 @@
         (retract ?f)
     )
 )
+
 
 (defrule RealizarVenta
       (declare(salience 4))
