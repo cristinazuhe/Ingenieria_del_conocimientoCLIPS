@@ -75,6 +75,7 @@
   (load "LecturaNoticias.CLP")
   (assert (BuscoMejoresPropuestas))
   (assert (HagoPropuestas))
+  (assert (PropuestasMejores nil nil 0))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -474,6 +475,7 @@
      (bind ?*contador_max* (+ ?*contador_max* 1))
      (assert (BuscoMejoresPropuestas))
      (assert (PropuestasMejores ?nombre ?nombre2 ?*contador_max*))
+     (assert (PropuestasMejores nil nil 0))
   )
   (if (> ?*contador_max* 4) then   ;Si ya tengo las 5 mejores, elimino las PropuestasPeores (las sigo teniendo en Propuestas)
      (retract ?a)
@@ -529,21 +531,19 @@
         (printout t " ¿Cuantas acciones quieres comprar de " ?nombreEmpresa "?." crlf)
         (bind ?Respuesta (explode$ (readline)))
         (assert (ComprarAcciones ?nombreEmpresa ?Respuesta))
-        (retract ?f)
     )
 
     (if (eq ?tipo "Vender") then
         (printout t " ¿Cuantas acciones quieres vender de " ?nombreEmpresa "?." crlf)
         (bind ?Respuesta (explode$ (readline)))
         (assert (VenderAccionesCartera ?nombreEmpresa ?Respuesta))
-        (retract ?f)
     )
     (if (eq ?tipo "Cambiar") then
         (printout t " ¿Cuantas acciones quieres cambiar de " ?nombreEmpresa " a " ?nombreEmpresa2 "?." crlf)
         (bind ?Respuesta (explode$ (readline)))
         (assert (CambiarAccionesEmpresa ?nombreEmpresa ?nombreEmpresa2 ?Respuesta))
-        (retract ?f)
     )
+    (retract ?f)
 )
 
 
@@ -559,6 +559,7 @@
                   (Nombre DISPONIBLE)
                   (Acciones ?dinero))
       =>
+      (assert (Reiniciar))
       (if (<= ?Respuesta ?acciones) then
         (retract ?f)
         (modify ?C1 (Acciones (- ?acciones ?Respuesta)) (ValorActual (- ?valorantiguo (* ?Respuesta (/ ?valorantiguo ?acciones)))))
@@ -588,6 +589,7 @@
       (Nombre ?nombreEmpresa)
       (Precio ?precio))
    =>
+   (assert (Reiniciar))
    (if (> (- ?dinero (* ?Respuesta ?precio)) 0) then
        (retract ?f)
        (modify ?C1 (Acciones (+ ?acciones ?Respuesta)) (ValorActual (+ ?valorantiguo (* ?Respuesta ?precio))))
@@ -612,6 +614,7 @@
             (Nombre ?nombreEmpresa)
             (Precio ?precio))
     =>
+    (assert (Reiniciar))
     (if (> (- ?dinero (* ?Respuesta ?precio)) 0) then
         (retract ?f)
         (assert (Cartera (Nombre ?nombreEmpresa) (Acciones ?Respuesta) (ValorActual (* ?Respuesta ?precio))))
@@ -642,6 +645,7 @@
                 (Acciones ?dinero))
     =>
   (retract ?f)
+  (assert (Reiniciar))
   (if (<= ?Respuesta ?acciones1) then                                                 ;si tengo tantas acciones para cambiar...
          (if (>= (/ ?valor1 ?acciones1) (/ ?valor2 ?acciones2) ) then                ;la primera empresa tiene un coste de acciones mayor...ganaré dinero disponible
               (modify ?C1 (Acciones (- ?acciones1 ?Respuesta)) (ValorActual (- ?valor1 (* ?Respuesta (/ ?valor1 ?acciones1)))))
@@ -690,6 +694,7 @@
                 (Acciones ?dinero))
       =>
     (retract ?f)
+    (assert (Reiniciar))
     (if (<= ?Respuesta ?acciones1) then                                                 ;si tengo tantas acciones para cambiar...
            (if (>= (/ ?valor1 ?acciones1) ?valor2 ) then                ;la primera empresa tiene un coste de acciones mayor...ganaré dinero disponible
                 (modify ?C1 (Acciones (- ?acciones1 ?Respuesta)) (ValorActual (- ?valor1 (* ?Respuesta (/ ?valor1 ?acciones1)))))
@@ -721,4 +726,37 @@
           (retract ?f)
           (printout t "No tienes tantas acciones para vender. " crlf)
       )
+)
+
+(defrule BorrarPropuestas
+    (declare(salience 3))
+    (Reiniciar)
+    ?f <- (Propuesta)
+    =>
+    (retract ?f)
+    (assert (BorrarMejores))
+)
+
+(defrule BorrarPropuestasMejores
+    (declare(salience 2))
+    (BorrarMejores)
+    ?f <- (PropuestasMejores ?nombre1 ?nombre2 ?numero)
+    =>
+    (retract ?f)
+    (assert (HacerNuevasPropuestas))
+)
+
+(defrule ReiniciarPropuestas
+    (declare(salience 1))
+    ?f <- (HacerNuevasPropuestas)
+    ?r <- (Reiniciar)
+    ?b <- (BorrarMejores)
+    =>
+    (retract ?f)
+    (retract ?r)
+    (retract ?b)
+    (bind ?*contador_max* 0)
+    (assert (PropuestasMejores nil nil 0))
+    (assert (HagoPropuestas))
+    (assert (BuscoMejoresPropuestas))
 )
