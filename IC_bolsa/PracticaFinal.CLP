@@ -454,8 +454,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Me quedo con las 5 mejores propuestas;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defglobal ?*contador_max* = 0)
+(defrule FinPropuestas
+   (declare(salience 8))
+   ?p <- (HagoPropuestas)
+   =>
+   (retract ?p)
+)
+
+(defrule Busco5MejoresPropuestas
   (declare(salience 8))
-  ?p <- (HagoPropuestas)
   ?f <- (BuscoMejoresPropuestas)
   (PropuestasPeores (RE ?x))
   (forall (PropuestasPeores (RE ?y)) (test (>= ?x ?y)))
@@ -470,7 +477,6 @@
   )
   (if (> ?*contador_max* 4) then   ;Si ya tengo las 5 mejores, elimino las PropuestasPeores (las sigo teniendo en Propuestas)
      (retract ?a)
-     (retract ?p)
   )
 )
 
