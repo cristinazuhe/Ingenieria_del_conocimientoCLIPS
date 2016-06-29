@@ -4,7 +4,9 @@
 (defrule openfileNoticias
   (declare(salience 30))
   =>
-  (open  "Noticias.txt" file3)
+  (printout t "Escriba el nombre del archivo .txt que contiene las noticias: " crlf )
+  (bind ?NombreArchivoNoticias (read) )
+  (open ?NombreArchivoNoticias file3)
   (assert (SeguirLeyendo3))
 )
 

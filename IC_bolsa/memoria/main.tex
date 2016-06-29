@@ -1,0 +1,146 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage[vmargin=3cm,hmargin=2cm]{geometry}
+
+\title{\textbf{\underline{CLIPS:}\\
+		 Sistema Experto para asesorar a un	inversor en bolsa.}}
+\author{\textbf{ Autora:} Cristina Zuheros Montes - 50616450\\
+	    \href{https://github.com/cristinazuhe}{Enlace a Github}}
+\date{\textbf{Fecha:} 30 Junio 2016}
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\newpage
+\section{Cómo funciona el Sistema Experto. }\label{PrimeraSeccion}
+ Vamos a desarrollar un Sistema Experto en CLIPS que sea capaz de asesorar a un inversor con una cartera de acciones en valores del Ibex 35.\\
+ 
+ Nuestro sistema dispondrá diariamente de la información de los valores de cierre del día anterior de las empresas del Ibex 35. Esta información estará almacenada en distintos archivos \textit{nombre\_archivoX.txt}.\\
+ 
+ Además será capaz de leer la información sobre la cartera del usuario para conocer las inversiones actuales del mismo. Esta información sobre la cartera del usuario se la proporcionará al Sistema Experto el propio usuario mediante un archivo \textit{nombre\_cartera.txt}. En él se indicará el nombre de la empresa, el número de acciones del que dispone y la valoración actual de esas acciones, es decir, el valor económico que tienen en el momento. \\
+ 
+ Asimismo el Sistema Experto va a solicitarle al usuario información sobre si ha habido noticias malas o buenas sobre las empresas del Ibex 35 en los últimos 3 días. Esta información se proporcionará a través de un archivo \textit{nombre\_noticias.txt}. En él se indicará el nombre de la empresa, si la noticia es buena o mala y el número de días que tiene la noticia de antigüedad. \\
+ 
+ Una vez que nuestro Sistema Experto ya dispone de todo el conocimiento necesario, va a razonar como el experto lo haría y va a proponer al Usuario hasta las 5 mejores opciones de compra-venta de valores, indicando los motivos por lo que aconseja estas propuestas. \\
+ 
+ Una vez que el usuario visualiza las opciones, tendrá la opción de aceptar alguna de estas sugerencias. En este caso, el sistema actualizará la información en cartera del usuario y propondrá nuestras propuestas en base a dicha actualización. 
+ 
+
+
+ 
+\newpage
+\section{Descripción del proceso seguido para el desarrollo. }
+\subsection{Sesiones con el experto, indicando información obtenida en cada una de ellas.}
+Para poder desarrollar nuestro Sistema Experto hemos tenido que realizar varias reuniones con el experto. 
+
+\begin{center}
+	\underline{\textbf{Primera sesión.}}
+\end{center}
+
+Hemos obtenido los objetivos básicos del sistema. Además hemos tratado de informarnos sobre qué datos necesita y de dónde los podremos extraer, para así poder tener toda la información a tratar en nuestro alcance. Le hemos realizado preguntas al experto como:\\
+
+\textbf{- ¿Qué datos usará nuestro sistema?}\\
+Básicamente usaremos datos sobre las empresas y sobre los sectores de dichas empresas del Ibex35. Además tendremos noticias sobre las empresas y sectores y contaremos con la cartera del usuario. \\
+
+\textbf{- ¿De dónde obtenemos dichos datos?}\\
+Los datos de empresas y sectores del Ibex 35 los obtendremos de la web de la bolsa de Madrid. La cartera y las noticias las proporciona el usuario. \\
+
+\textbf{- ¿Cuántas sugerencias quieres que te muestre el sistema?}\\
+Quiero las 5 mejores propuestas. \\
+
+\begin{center}
+	\underline{\textbf{Segunda sesión.}}
+\end{center}
+
+Nos hemos preocupado por conocer qué significa para el usuario que un valor sea peligroso. Nos centremos en la pregunta "¿Bajo qué conceptos vamos a definir si un valor es o no peligroso?". Aquí nos surgen preguntas sobre:\\
+
+\textbf{- ¿Cuándo un valor es inestable?}\\
+Bien cuando la empresa sea del sector de la construcción o bien cuando la economía esté bajando y la empresa sea del sector servicios o bien cuando haya ciertas noticias malas sobre la empresa, su sector o el Ibex. \\
+
+\textbf{- ¿Que quiere decir que la economía esté bajando?}\\
+Que el valor en los últimos 3 días esté bajando. Con valor nos referimos a la media de los valores del Ibex35. \\
+
+\textbf{- ¿Cuándo un valor es estable?}\\
+Un valor pasa a ser estable si alguna noticias positivas sobre la empresa o su sector.
+
+\textbf{- ¿Qué hacer cuándo tenemos noticias negativas y positivas que impliquen a una misma empresa?}\\
+La información más específica es la que predonima. \\
+
+\begin{center}
+	\underline{\textbf{Tercera sesión.}}
+\end{center}
+
+Con el experto obtenemos información sobre qué significa para él que un valor este infravalorado o sobrevalorado. Realizamos preguntas como:\\
+
+\textbf{- ¿Cuándo podemos decir que una empresa ha caido bastante en X tiempo?}\\
+Que su variación en X tiempo haya caido más del 30\%.\\
+
+\textbf{- ¿Cuándo podemos decir que una empresa ha subido, pero no mucho en el mes?}\\
+Que la variación del mes sea positiva pero inferior al 10\%.
+
+\textbf{- ¿Qué quiere decir que una empresa se comporte mejor o peor que su sector?}\\
+Que la variación de la empresa sea mejor o peor que la de su sector. 
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+\subsection{Procedimiento de validación y verificación del sistema seguido.}
+Hemos probado el sistema para comprobar que, efectivamente, cumple su funcionamiento requerido.\\
+Algunos aspectos que hemos tratado para que todo funciones correctamente o que se han prestado a confusión y se merecen una mención destacada son:\\
+
+\begin{center}
+	\textbf{¿Comprar acciones o invertir dinero?}
+\end{center}
+Este es un punto importante que puede prestar a confusión con las peticiones que se han solicitado al sistema. Si nuestro Sistema Experto propone que se invierta en una empresa, podríamos pensar en comprar X acciones o bien en invertir X dinero para comprar tantas acciones como se pueda. \\
+
+Si el usuario indica la cantidad de dinero que quiere comprar, seguramente indicará una cantidad de dinero no proporcional a la cantidad entera de acciones que puede comprar de la empresa. Por este motivo, hemos considerado que es mejor solicitar el número de acciones que quiere comprar y comprarlas si de verdad el usuario tiene dinero disponible. \\
+
+Es un aspecto que puede modificarse fácilmente pero, como el experto no lo ha especificado, hemos optado por la opción indicada anteriormente por la propia comodidad del usuario. \\
+
+\begin{center}
+	\textbf{Permitir comprar acciones.}
+\end{center}
+Cuando vamos a cambiar ciertas acciones de una empresa de la cartera a otra, esté o no en la cartera, vamos a tener que comprobar que si las acciones de la primera empresa cuestan menos que las acciones de la segunda empresa, tengamos dinero suficiente disponible para el desfase que se produce de dinero.\\
+
+Vamos a optar por hacer el cambio de las acciones de una empresa a otra siempre y cuando el usuario tenga dinero disponible suficiente. De modo que el usuario tiene que ser consciente de que el cambio le puede suponer dicho coste.\\
+
+\begin{center}
+	\textbf{Cotización de las empresas.}
+\end{center}
+El precio de las acciones depende de la empresa en cuestión. Este precio lo tendremos indicado en el archivo de las empresas en la variable Precio. Pero además, si tenemos compradas acciones de la empresa, lo podremos calcular a partir de los valores de la cartera del usuario, pues en ella disponemos de la cantidad de acciones que tenemos y del precio que tienen todas estas acciones en el momento.\\
+
+Para realizar algunos razonamientos en nuestro Sistema Experto, hemos utilizado la cotización de la empresa mirándola en el archivo de las empresas o mirando los datos de la empresa que tenemos en cartera, según nos ha ido interesando para que en ningún momento tengamos resultados extraños por décimas que puedan variar. \\
+
+Hemos ido comprobando con distintas situaciones que todo se haga correctamente.\\ 
+
+
+
+\newpage
+\section{Descripción del sistema desarrollado.}
+\subsection{Variables de entrada del problema}
+\subsection{Variables de salida del problema}
+\subsection{Conocimiento global del sistema (hechos y relaciones que se cargan
+	inicialmente)}
+\subsection{Especificación de los módulos se han desarrollado (incluyendo para cada
+módulo el objetivo, conocimiento que utiliza, y conocimiento que se deduce)}
+\subsection{Estructura de funcionamiento del esquema de razonamiento del sistema
+(cuándo actuará cada módulo)}
+\subsection{La lista de hechos que utiliza el sistema durante su funcionamiento y la forma
+de representarlos.}
+\subsection{Los hechos y las reglas de cada módulo.}
+
+
+
+\newpage
+\section{Breve manual de uso del sistema}
+
+
+
+\end{document}

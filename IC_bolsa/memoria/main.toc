@@ -1,0 +1,14 @@
+\select@language {spanish}
+\contentsline {section}{\numberline {1}C\IeC {\'o}mo funciona el Sistema Experto. }{2}{section.1}
+\contentsline {section}{\numberline {2}Descripci\IeC {\'o}n del proceso seguido para el desarrollo. }{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}Sesiones con el experto, indicando informaci\IeC {\'o}n obtenida en cada una de ellas.}{3}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Procedimiento de validaci\IeC {\'o}n y verificaci\IeC {\'o}n del sistema seguido.}{4}{subsection.2.2}
+\contentsline {section}{\numberline {3}Descripci\IeC {\'o}n del sistema desarrollado.}{6}{section.3}
+\contentsline {subsection}{\numberline {3.1}Variables de entrada del problema}{6}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Variables de salida del problema}{6}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Conocimiento global del sistema (hechos y relaciones que se cargan inicialmente)}{6}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Especificaci\IeC {\'o}n de los m\IeC {\'o}dulos se han desarrollado (incluyendo para cada m\IeC {\'o}dulo el objetivo, conocimiento que utiliza, y conocimiento que se deduce)}{6}{subsection.3.4}
+\contentsline {subsection}{\numberline {3.5}Estructura de funcionamiento del esquema de razonamiento del sistema (cu\IeC {\'a}ndo actuar\IeC {\'a} cada m\IeC {\'o}dulo)}{6}{subsection.3.5}
+\contentsline {subsection}{\numberline {3.6}La lista de hechos que utiliza el sistema durante su funcionamiento y la forma de representarlos.}{6}{subsection.3.6}
+\contentsline {subsection}{\numberline {3.7}Los hechos y las reglas de cada m\IeC {\'o}dulo.}{6}{subsection.3.7}
+\contentsline {section}{\numberline {4}Breve manual de uso del sistema}{7}{section.4}
