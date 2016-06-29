@@ -396,7 +396,6 @@
    )
 )
 
-
 (defrule propuesta3
     (declare(salience 9))
     (HagoPropuestas)
@@ -516,7 +515,6 @@
 )
 
 (defrule RealizarEleccionUsuario
-    (declare(salience 5))
     ?f <- (OpcionElegida ?Respuesta)
     (PropuestasMejores ?nombreEmpresa ?nombreEmpresa2 ?Respuesta)
     (Propuesta
@@ -548,7 +546,6 @@
 
 
 (defrule RealizarVenta
-      (declare(salience 4))
       ?f <- (VenderAccionesCartera ?nombreEmpresa ?Respuesta)
       ?C1 <- (Cartera
                  (Nombre ?nombreEmpresa)
@@ -575,7 +572,6 @@
 )
 
 (defrule RealizarInversionYaEnCartera
-    (declare(salience 4))
     ?f <- (ComprarAcciones ?nombreEmpresa ?Respuesta)
     ?C1 <- (Cartera
                (Nombre ?nombreEmpresa)
@@ -605,7 +601,6 @@
 )
 
 (defrule RealizarInversionNoEnCartera
-    (declare(salience 4))
     ?f <- (ComprarAcciones ?nombreEmpresa ?Respuesta)
     ?C2 <- (Cartera
               (Nombre DISPONIBLE)
@@ -630,7 +625,6 @@
 )
 
 (defrule RealizarCambioAccionesYaEnCartera
-    (declare(salience 4))
     ?f <- (CambiarAccionesEmpresa ?nombreEmpresa1 ?nombreEmpresa2 ?Respuesta)
     ?C1 <- (Cartera
                (Nombre ?nombreEmpresa1)
@@ -680,7 +674,6 @@
 )
 
 (defrule RealizarCambioAccionesNoEnCartera
-    (declare(salience 4))
     ?f <- (CambiarAccionesEmpresa ?nombreEmpresa1 ?nombreEmpresa2 ?Respuesta)
     ?C1 <- (Cartera
                (Nombre ?nombreEmpresa1)
@@ -747,7 +740,6 @@
 )
 
 (defrule ReiniciarPropuestas
-    (declare(salience 1))
     ?f <- (HacerNuevasPropuestas)
     ?r <- (Reiniciar)
     ?b <- (BorrarMejores)
