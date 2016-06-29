@@ -440,12 +440,12 @@
       (Nombre ?NombreSector2)
       (PERMedio ?PERMedioSector2))
    =>
-   (if (> ?RPD1 ( + (+ ?RPD2 1) ( + ?RPD2 ?var12))) then
+   (if (> ?RPD1 ( + 1 ( + ?RPD2 ?var12))) then
       (assert (Propuesta (NombreEmpresa ?empresa2) (NombreEmpresa2 ?empresa1)(NombreSector ?NombreSector2) (TipoPropuesta "Cambiar")
-                         (RE (- ?RPD1 (+ 1 (+ ?RPD2 (* ( + ?RPD2 ?var12)( / (* 100 (- ?PER2 ?PERMedioSector2)) (* 5 ?PER2))) ) )))
-                         (Explicacion "debe tener una revalorizacion...") ))
+                         (RE (- ?RPD1 (+ 1 (+ (* ?RPD2 ( / (* 100 (- ?PER2 ?PERMedioSector2)) (* 5 ?PER2)   )) ?var12 ) )))
+                         (Explicacion (str-cat ?empresa1 " debe tener una revalorizacion acorde con la evolución de la bolsa." )) ))
       (assert (PropuestasPeores (NombreEmpresa ?empresa2) (NombreEmpresa2 ?empresa1)
-                               (RE (- ?RPD1 (+ 1 (+ ?RPD2 (* ( + ?RPD2 ?var12)( / (* 100 (- ?PER2 ?PERMedioSector2)) (* 5 ?PER2)) )) )) )  ))
+                                (RE (- ?RPD1 (+ 1 (+ (* ?RPD2 ( / (* 100 (- ?PER2 ?PERMedioSector2)) (* 5 ?PER2)   )) ?var12 ) ))) ))
     )
 )
 
