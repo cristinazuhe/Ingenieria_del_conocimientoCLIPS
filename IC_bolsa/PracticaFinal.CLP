@@ -353,7 +353,11 @@
   (Sector
       (Nombre ?nombreSector)
       (VarMes ?varMesSector))
+  (Cartera
+      (Nombre ?nombre)
+      (Acciones ?acciones))
   =>
+  (if (> ?acciones 0) then
   (if (< ?varMes 0) then
       (if (< (- ?varMes ?varMesSector) -3) then
         (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Vender")
@@ -364,6 +368,7 @@ al cabo del anio un 20%.
 Aunque produzca un " (* 100 ?miRPD) "% por dividendos, perderiamos un " (- 20 ?miRPD)"%."))) )
         (assert (PropuestasPeores (NombreEmpresa ?nombre)  (RE (- 20 ?miRPD)) ) )
       )
+  )
   )
 )
 
@@ -407,7 +412,8 @@ tienda al PERMedio (" ?PERIbex ") en 5 anios." )) ))
     (declare(salience 9))
     (HagoPropuestas)
     (Cartera
-      (Nombre ?nombre))
+      (Nombre ?nombre)
+      (Acciones ?acciones))
     (ValorSobrevalorado ?nombre)
     (Empresas
       (Nombre ?nombre)
@@ -419,6 +425,7 @@ tienda al PERMedio (" ?PERIbex ") en 5 anios." )) ))
       (Nombre ?nombreSector)
       (PERMedio ?PERMedioSector))
     =>
+    (if (> ?acciones 0) then
     (if (< ( / (* 100 (- ?miPER ?PERMedioSector)) (* 5 ?miPER)   ) (+ 5 ?precio) ) then
        (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Vender")
             (RE (+ (- 0 ?miRPD) (/ (* (- ?miPER ?PERMedioSector ) 100) (* 5 ?miPER )) ) )
@@ -427,6 +434,7 @@ ya que seguramente el PER tan alto (" ?miPER ") debera bajar al PER medio del se
 Por tanto, se deberia devaluar un " (/ (* (- ?miPER ?PERMedioSector ) 100) (* 5 ?miPER )) " anual, asi que aunque se pierda el " (* 100 ?miRPD) "
 de beneficios por dividendos saldria rentable." ) ) ))
        (assert (PropuestasPeores (NombreEmpresa ?nombre) (RE (+ ?miRPD (/ (* (- ?miPER ?PERMedioSector ) 100) (* 5 ?miPER )) ) )  ))
+    )
     )
 )
 
@@ -543,6 +551,9 @@ El rendimiento esperado es de " ?miRE crlf)
          (RE ?miRE)
          (NombreSector ?nombreSector)
          (Explicacion ?explicacion))
+    (Cartera
+        (Nombre ?nombreCartera)
+        (Acciones ?accionesCartera))
     =>
     (if (eq ?tipo "Invertir") then
         (printout t " ¿Cuantas acciones quieres comprar de " ?nombreEmpresa "?." crlf)
