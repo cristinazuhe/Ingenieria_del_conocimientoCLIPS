@@ -357,7 +357,11 @@
   (if (< ?varMes 0) then
       (if (< (- ?varMes ?varMesSector) -3) then
         (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Vender")
-                           (RE (- 20 ?miRPD)) (Explicacion "La empresa es peligrosa por..........;")) )
+                           (RE (- 20 ?miRPD)) (Explicacion (str-cat ?nombre " es peligrosa.
+Ademas esta entrando en tendencia bajista con respecto a su sector.
+Segun mi estimacion existe una probabilidad no despreciable de que pueda caer
+al cabo del anio un 20%.
+Aunque produzca un " (* 100 ?miRPD) "% por dividendos, perderiamos un " (- 20 ?miRPD)"%."))) )
         (assert (PropuestasPeores (NombreEmpresa ?nombre)  (RE (- 20 ?miRPD)) ) )
         (printout t ?nombre " peligroso. Propuesta1." crlf )
       )
@@ -384,17 +388,21 @@
      (if (> ?miPER 0) then
        (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Invertir")
                (RE (+ (/ (* (- ?PERIbex ?miPER) 100) (* 5 ?miPER) ) ?miRPD))
-               (Explicacion "Esta empresa esta infravalorada...") ))
+               (Explicacion (str-cat ?nombre " esta infravalorada y seguramente el PER (" ?miPER ")
+tienda al PERMedio (" ?PERIbex ") en 5 anios, con lo que se deberia revalorizar un
+" (/ (* (- ?PERIbex ?miPER) 100) (* 5 ?miPER) )  " anual, a lo que habria que sumar un " (* ?miRPD 100) "% de beneficios por dividendos. " )) ))
        (assert (PropuestasPeores (NombreEmpresa ?nombre) (RE (+ (/ (* (- ?PERIbex ?miPER) 100) (* 5 ?miPER) ) ?miRPD)) ))
      )
      (if (= ?miPER 0) then
      (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Invertir")
              (RE ?miRPD)
-             (Explicacion "Esta empresa esta infravalorada...") ))
+             (Explicacion (str-cat ?nombre " esta infravalorada y seguramente el PER (" ?miPER ")
+tienda al PERMedio (" ?PERIbex ") en 5 anios." )) ))
      (assert (PropuestasPeores (NombreEmpresa ?nombre) (RE ?miRPD)  ))
      )
    )
 )
+
 
 (defrule propuesta3
     (declare(salience 9))
@@ -414,11 +422,15 @@
     =>
     (if (< ( / (* 100 (- ?miPER ?PERMedioSector)) (* 5 ?miPER)   ) (+ 5 ?precio) ) then
        (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Vender")
-            (RE (+ (- 0 ?miRPD) (/ (- ?miPER ?PERMedioSector ) (* 5 ?miPER )) ) )
-            (Explicacion "Esta empresa esta sobrevalorada...") ))
-       (assert (PropuestasPeores (NombreEmpresa ?nombre) (RE (- ?miRPD (/ (- ?miPER ?PERMedioSector ) (* 5 ?miPER )) ) )  ))
+            (RE (+ (- 0 ?miRPD) (/ (* (- ?miPER ?PERMedioSector ) 100) (* 5 ?miPER )) ) )
+            (Explicacion (str-cat ?nombre " esta sobrevalorada, es mejor amortizar lo invertido,
+ya que seguramente el PER tan alto (" ?miPER ") debera bajar al PER medio del sector (" ?PERMedioSector ").
+Por tanto, se deberia devaluar un " (/ (* (- ?miPER ?PERMedioSector ) 100) (* 5 ?miPER )) " anual, asi que aunque se pierda el " (* 100 ?miRPD) "
+de beneficios por dividendos saldria rentable." ) ) ))
+       (assert (PropuestasPeores (NombreEmpresa ?nombre) (RE (+ ?miRPD (/ (* (- ?miPER ?PERMedioSector ) 100) (* 5 ?miPER )) ) )  ))
     )
 )
+
 
 (defrule propuesta4
    (declare(salience 9))
@@ -443,11 +455,14 @@
    (if (> ?RPD1 ( + 1 ( + ?RPD2 ?var12))) then
       (assert (Propuesta (NombreEmpresa ?empresa2) (NombreEmpresa2 ?empresa1)(NombreSector ?NombreSector2) (TipoPropuesta "Cambiar")
                          (RE (- ?RPD1 (+ 1 (+ (* ?RPD2 ( / (* 100 (- ?PER2 ?PERMedioSector2)) (* 5 ?PER2)   )) ?var12 ) )))
-                         (Explicacion (str-cat ?empresa1 " debe tener una revalorizacion acorde con la evolución de la bolsa." )) ))
+                         (Explicacion (str-cat ?empresa1 " debe tener una revalorizacion acorde con la evolucion de la bolsa.
+Por dividendos se espera un " (* ?RPD2 100) "%, que es mas de lo que te esta dando " ?empresa2 ",
+por eso te propongo cambiar los valores por los de esta otra. " )) ))
       (assert (PropuestasPeores (NombreEmpresa ?empresa2) (NombreEmpresa2 ?empresa1)
                                 (RE (- ?RPD1 (+ 1 (+ (* ?RPD2 ( / (* 100 (- ?PER2 ?PERMedioSector2)) (* 5 ?PER2)   )) ?var12 ) ))) ))
     )
 )
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;MÓDULO 4.2 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
