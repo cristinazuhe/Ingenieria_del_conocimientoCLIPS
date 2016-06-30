@@ -3,6 +3,7 @@
 \usepackage[spanish]{babel}
 \usepackage{enumerate}
 \usepackage{graphicx}
+\usepackage{listings}
 \usepackage[hidelinks]{hyperref}
 \usepackage[vmargin=3cm,hmargin=2cm]{geometry}
 
@@ -125,7 +126,116 @@ Hemos ido comprobando con distintas situaciones que todo se haga correctamente.\
 \newpage
 \section{Descripción del sistema desarrollado.}
 \subsection{Variables de entrada del problema}
+Ya hemos comentado que nuestro sistema va a ser uno de distintas variables de entrada:
+
+\begin{center}
+	\textbf{Datos básicos de las empresas.}
+\end{center}
+Lo primero que hacemos en nuestro sistema, va a ser cargar los datos sobre las empresas. Para ello vamos a definir un deftemplate que contenga tantos slot como variables de cada empresa. La estructura quedaría del siguiente modo:
+
+\begin{lstlisting}
+(deftemplate Empresas
+	(slot Nombre)
+	(slot Precio)
+	(slot VariacionDia)
+	(slot Capitalizacion)
+	(slot PER)
+	(slot RPD)
+	(slot Tamanio)
+	(slot PorcentIBEX)
+	(slot EtiquetaPER)
+	(slot EtiquetaRPD)
+	(slot Sector)
+	(slot Var5Dias)
+	(slot Perd3Dias)
+	(slot Perd5Dias)
+	(slot VarSector5Dias)
+	(slot VRS5)
+	(slot VarMes)
+	(slot VarTrimestre)
+	(slot VarSemestre)
+	(slot VarAnual)
+)
+\end{lstlisting}
+
+
+Para cargar estos datos de las empresas, vamos a crear un fichero auxiliar al que llamaremos \textit{LecturaEmpresa.CLP}.
+
+Vamos a explicar brevemente lo que hacemos en este archivo ya que lo hacemos para leer los distintos datos que necesita nuestro sistema:
+
+En primer lugar creamos una regla que nos permita abrir el archivo. A continuación, leemos los datos del fichero mediante (read file) y situamos cada variable de la empresa en su correspondiente slot. Finalmente, tenemos otra regla con la que cerramos el archivo. Nos hemos basado en el esquema del pdf proporcionado llamado \textit{"Ejemplo Leer datos de un fichero procesarlos y guardarlos (CLIPS).pdf"}.
+
+De este modo, ya tenemos los datos de las empresas disponibles para usarlos en nuestro Sistema Experto. 
+
+\begin{center}
+	\textbf{Datos básicos de los sectores.}
+\end{center}
+Una vez que tenemos cargados los datos de la empresas, vamos a cargar los datos de los sectores a los que pueden pertenecer las empresas. Definimos otra estructura deftemplate con tantos slot como variables tienen los sectores. La estructura quedaría del siguiente modo:
+\begin{lstlisting}
+(deftemplate Sector
+	(slot Nombre)
+	(slot VariacionDia)
+	(slot Capitalizacion)
+	(slot PERMedio)
+	(slot RPDMedio)
+	(slot PorcentIBEX)
+	(slot Var5Dias)
+	(slot Perd3Dias)
+	(slot Perd5Dias)
+	(slot VarMes)	
+	(slot VarTrimestre)
+	(slot VarSemestre)
+	(slot VarAnual)
+)
+\end{lstlisting}
+De nuevo, creamos un fichero auxiliar \textit{LecturaSectores.CLP} que nos va a permitir obtener los datos de los sectores y almacenarlos en la estructura que acabamos de ver. El código es similar al comentado para las empresas. \\
+Finalmente merece la pena recordar que tanto los datos de las empresas como los de los sectores los tenemos almacenados en distintos ficheros \textit{nombre\_fichero.txt} en nuestro directorio de trabajo.
+
+\begin{center}
+	\textbf{Noticias de las empresas/sectores.}
+\end{center}
+Ya tenemos los datos sobre las empresas y los sectores. Ahora tendremos que saber si hay noticias buenas o malas sobre las mismas y almacenar la información en nuestro sistema. Volveremos a definir un deftemplate para almacenar las noticias:
+\begin{lstlisting}
+(deftemplate Noticia
+	(slot Nombre)
+	(slot Tipo)
+	(slot Antiguedad)
+)
+\end{lstlisting}
+A diferencia de los datos de las empresas y de los sectores, las noticias se las tendremos que pedir al usuario. Éste será el encargado de proporcionar el fichero \textit{nombre\_noticias.txt} que contiene las noticias. \\
+Volvemos a crear un fichero auxiliar \textit{LecturaNoticias.CLP} donde hacemos la lectura del fichero que nos indica el usuario (sería la misma regla que con la lectura de las empresas y los sectores, con la diferencia de que ahora el nombre del archivo lo tiene que proporcionar el usuario por teclado), cargamos las noticias en la estructura definida y cerramos el archivo. 
+
+\begin{center}
+	\textbf{Cartera del usuario.}
+\end{center}
+Finalmente, nuestro Sistema Experto necesita conocer cuáles son las inversiones actuales del usuario. Para ello se le solicitará el nombre del \textit{archivo\_cartera.txt} al usuario y almacenaremos los datos en un nuevo deftemplate:
+\begin{lstlisting}
+(deftemplate Cartera
+	(slot Nombre)
+	(slot Acciones)
+	(slot ValorActual)
+)
+\end{lstlisting}
+Al igual que hacíamos con las noticias, creamos un fichero auxiliar \textit{LecturaCartera.CLP} donde hacemos la lectura del fichero que indique el usuario por teclado, cargamos los datos de la cartera en la estructura definida y cerramos el archivo.\\
+
+En este punto merece la pena comentar que la primera línea del \textit{archivo\_cartera.txt} tiene que contener la cantidad de dinero que tiene el usuario disponible. Para ello tendrá que tener la siguiente sintaxis: 
+\begin{center}
+	DISPONIBLE x...x x...x\\
+\end{center}
+donde x...x es la cantidad de dinero disponible del usuario. 
+
+Por la forma de definir nuestro deftemplate, en Cartera siempre vamos a tener al menos creado el hecho (Cartera (Nombre DISPONIBLE)(Acciones x...x)(ValorActual x...x)). \\
+
+En el caso de que vendamos todas las acciones de una empresa que tenemos en cartera, en lugar de eliminarla, vamos a establecer su número de Acciones y su ValorActual a 0. Esto no supone ningún problema de funcionamiento para el sistema, ya que siempre hacemos todas las comprobaciones necesarias para hacer cambios en la cartera, y de este modo el usuario sabrá que ha tenido cambios en dicha empresa. 
+
+
+
 \subsection{Variables de salida del problema}
+Una vez que nuestro Sistema Experto razona como el experto lo haría y propone al usuario las 5 mejores propuestas de venta, compra o cambio, se van a realizar cambios en la cartera del usuario. Se añadirán o eliminarán acciones de las empresas que el usuario haya elegido para hacer modificaciones. Además se modificará el dinero que tiene el usuario disponible en cartera, acorde con las propuestas que se hayan confirmado por parte del mismo. \\
+
+Estas modificaciones en la cartera no van a ser definitivas, sino que van a durar durante la consulta al Sistema Experto por parte del usuario. Si éste quisiera que estas modificaciones fueran definitivas, tendría que haber sido especificado anteriormente. De todas maneras, no sería un cambio difícil de hacer. Simplemente, tendríamos que hacer la escritura en \textit{archivo\_cartera.txt} de los nuevos o modificados hechos de la Cartera que vamos viendo en la misma consulta al Sistema. \\
+
+
 \subsection{Conocimiento global del sistema (hechos y relaciones que se cargan
 	inicialmente)}
 \subsection{Especificación de los módulos se han desarrollado (incluyendo para cada

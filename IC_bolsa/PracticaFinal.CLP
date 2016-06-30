@@ -1,7 +1,6 @@
 ;SISTEMA EXPERTO para asesorar a un usuario a invetir en bolsa
 ;Autora: Cristina Zuheros Montes.
-;Fecha:30/06/2016
-
+;Fecha:30
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;DEFINIMOS LAS ESTRUCTURAS DE TRABAJO
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -83,7 +82,6 @@
   (load "LecturaNoticias.CLP")
   (assert (BuscoMejoresPropuestas))
   (assert (HagoPropuestas))
-  (assert (PropuestasMejores nil nil 0))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -496,7 +494,6 @@ por eso te propongo cambiar los valores por los de esta otra. " )) ))
      (bind ?*contador_max* (+ ?*contador_max* 1))
      (assert (BuscoMejoresPropuestas))
      (assert (PropuestasMejores ?nombre ?nombre2 ?*contador_max*))
-     (assert (PropuestasMejores nil nil 0))
   )
   (if (> ?*contador_max* 4) then   ;Si ya tengo las 5 mejores, elimino las PropuestasPeores (las sigo teniendo en Propuestas)
      (retract ?a)
@@ -811,7 +808,6 @@ El rendimiento esperado es de " ?miRE crlf)
     (bind ?*contador_max* 0)
     (printout t "Pulse cualquier tecla para ver mas propuestas... " crlf)
     (bind ?Sigamos (explode$ (readline)))
-    (assert (PropuestasMejores nil nil 0))
     (assert (HagoPropuestas))
     (assert (BuscoMejoresPropuestas))
 )
