@@ -1,3 +1,7 @@
+;SISTEMA EXPERTO para asesorar a un usuario a invetir en bolsa
+;Autora: Cristina Zuheros Montes.
+;Fecha:30/06/2016
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;DEFINIMOS LAS ESTRUCTURAS DE TRABAJO
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -62,6 +66,10 @@
   (slot NombreEmpresa2)
   (slot RE))
 
+(deftemplate ValorPeligroso
+  (slot Nombre)
+  (slot ExplicacionPeligroso)
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;LEEMOS LOS DATOS DE ANALISIS, ANALISIS SECTORES Y LA CARTERA DEL USUARIO
@@ -88,7 +96,6 @@
       (Sector Construccion))
    =>
    (assert (ValorInestable ?nombre))
-   (printout t ?nombre " -------- valor INESTABLE. Regla 1." crlf )
 )
 
 (defrule valorInestable2
@@ -102,7 +109,6 @@
    =>
    (if (< ?cantidad 0) then
        (assert (ValorInestable ?nombre))
-       (printout t ?nombre " --------valor INESTABLE. Regla 2" crlf )
    )
 )
 
@@ -119,7 +125,6 @@
    (not(ValorInestable ?nombre))
    =>
       (assert (ValorInestable ?nombre))
-      (printout t ?nombre " -------- valor INESTABLE . Regla 6." crlf )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 5. M_S;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -138,7 +143,6 @@
    (not(ValorInestable ?nombre))
    =>
    (assert (ValorInestable ?nombre))
-   (printout t ?nombre " -------- valor INESTABLE . Regla 5." crlf )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 3. B_Sectores;;;;;;;;;;;;;;;;;;
@@ -156,7 +160,6 @@
     =>
     (assert (Etapas paso1Fin))
     (retract ?f)
-    (printout t ?nombre " -------- valor ESTABLE . Regla 3 Sector." crlf )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 4 M_E;;;;;;;;;;;;;;;;;;
@@ -173,7 +176,6 @@
    =>
    (assert (Etapas paso2Fin))
    (assert (ValorInestable ?nombre))
-   (printout t ?nombre " -------- valor INESTABLE . Regla 4." crlf )
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;punto 3. B_Empresa;;;;;;;;;;;;;;;;;;
@@ -189,7 +191,6 @@
    =>
    (assert (Etapas paso3Fin))
    (retract ?f)
-   (printout t ?nombre " -------- valor ESTABLE . Regla 3." crlf )
 )
 
 
@@ -206,7 +207,8 @@
      (Nombre ?nombre)
      (Perd3Dias true))
   =>
-  (assert (ValorPeligroso ?nombre))
+  (assert (ValorPeligroso (Nombre ?nombre)(ExplicacionPeligroso (str-cat ?nombre " es inestable.
+Asimismo esta perdiendo de forma continua durante los ultimos 3 dias."))))
 )
 
 (defrule valorPeligroso2
@@ -218,7 +220,8 @@
      (VarSector5Dias ?valsec))
   =>
   (if (< ?valsec -5) then
-  (assert (ValorPeligroso ?nombre))
+  (assert (ValorPeligroso (Nombre ?nombre)(ExplicacionPeligroso (str-cat ?nombre " esta perdiendo durante los ultimos 5 dias.
+Asimismo la variacion con respecto a la del sector es mayor de un -5%."))))
   )
 )
 
@@ -308,15 +311,12 @@
   (if (> ?varciacionMes 0) then
     (if (< ?var3 -30) then
      (assert (ValorInfravalorado ?nombre))
-     (printout t ?nombre " es un valor infravalorado. Regla 2. Condicion Trimestre" crlf )
     )
     (if (< ?var6 -30) then
      (assert (ValorInfravalorado ?nombre))
-     (printout t ?nombre " es un valor infravalorado. Regla 2. Condicion Semestre" crlf )
     )
     (if (< ?var12 -30) then
      (assert (ValorInfravalorado ?nombre))
-     (printout t ?nombre " es un valor infravalorado. Regla 2. Condicion Anual" crlf )
     )
   )
 )
@@ -328,7 +328,7 @@
      (Tamanio GRANDE)
      (EtiquetaRPD Alto)
      (EtiquetaPER Medio)
-     (VarMes ?varMes)      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;¿ESTA VARIABLE O VAR5??
+     (VarMes ?varMes)
      (VarSector5Dias ?varSector))
   =>
   (if (> ?varSector 0) then
@@ -344,7 +344,7 @@
 (defrule propuesta1
   (declare(salience 9))
   (HagoPropuestas)
-  (ValorPeligroso ?nombre)
+  (ValorPeligroso (Nombre ?nombre) (ExplicacionPeligroso ?explicacionPeligro))
   (Empresas
       (Nombre ?nombre)
       (VarMes ?varMes)
@@ -361,7 +361,7 @@
   (if (< ?varMes 0) then
       (if (< (- ?varMes ?varMesSector) -3) then
         (assert (Propuesta (NombreEmpresa ?nombre) (NombreSector ?nombreSector) (TipoPropuesta "Vender")
-                           (RE (- 20 ?miRPD)) (Explicacion (str-cat ?nombre " es peligrosa.
+                           (RE (- 20 ?miRPD)) (Explicacion (str-cat ?nombre " es peligrosa: " ?explicacionPeligro "
 Ademas esta entrando en tendencia bajista con respecto a su sector.
 Segun mi estimacion existe una probabilidad no despreciable de que pueda caer
 al cabo del anio un 20%.
