@@ -552,28 +552,40 @@ El rendimiento esperado es de " ?miRE crlf)
          (NombreSector ?nombreSector)
          (Explicacion ?explicacion))
     (Cartera
-        (Nombre ?nombreCartera)
+        (Nombre ?nombreEmpresa)
         (Acciones ?accionesCartera))
     =>
-    (if (eq ?tipo "Invertir") then
-        (printout t " ¿Cuantas acciones quieres comprar de " ?nombreEmpresa "?." crlf)
-        (bind ?Respuesta (explode$ (readline)))
-        (assert (ComprarAcciones ?nombreEmpresa ?Respuesta))
-    )
-
     (if (eq ?tipo "Vender") then
-        (printout t " ¿Cuantas acciones quieres vender de " ?nombreEmpresa "?." crlf)
+        (printout t " ¿Cuantas acciones quieres vender de " ?nombreEmpresa "?. Tienes " ?accionesCartera " acciones." crlf)
         (bind ?Respuesta (explode$ (readline)))
         (assert (VenderAccionesCartera ?nombreEmpresa ?Respuesta))
     )
     (if (eq ?tipo "Cambiar") then
-        (printout t " ¿Cuantas acciones quieres cambiar de " ?nombreEmpresa " a " ?nombreEmpresa2 "?." crlf)
+        (printout t " ¿Cuantas acciones quieres cambiar de " ?nombreEmpresa " a " ?nombreEmpresa2 "?. Tienes " ?accionesCartera " acciones." crlf)
         (bind ?Respuesta (explode$ (readline)))
         (assert (CambiarAccionesEmpresa ?nombreEmpresa ?nombreEmpresa2 ?Respuesta))
     )
     (retract ?f)
 )
 
+(defrule RealizarEleccionUsuario2
+    ?f <- (OpcionElegida ?Respuesta)
+    (PropuestasMejores ?nombreEmpresa ?nombreEmpresa2 ?Respuesta)
+    (Propuesta
+         (NombreEmpresa ?nombreEmpresa)
+         (NombreEmpresa2 ?nombreEmpresa2)
+         (TipoPropuesta ?tipo)
+         (RE ?miRE)
+         (NombreSector ?nombreSector)
+         (Explicacion ?explicacion))
+    =>
+    (if (eq ?tipo "Invertir") then
+        (printout t " ¿Cuantas acciones quieres comprar de " ?nombreEmpresa "?." crlf)
+        (bind ?Respuesta (explode$ (readline)))
+        (assert (ComprarAcciones ?nombreEmpresa ?Respuesta))
+    )
+    (retract ?f)
+)
 
 (defrule RealizarVenta
       ?f <- (VenderAccionesCartera ?nombreEmpresa ?Respuesta)
