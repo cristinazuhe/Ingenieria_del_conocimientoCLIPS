@@ -452,12 +452,15 @@ de beneficios por dividendos saldria rentable." ) ) ))
       (VarAnual ?var12))
    (not (ValorInfravalorado ?empresa2))
    (Cartera
-      (Nombre ?empresa2))
+      (Nombre ?empresa2)
+      (Acciones ?acciones))
     (Sector
       (Nombre ?NombreSector2)
       (PERMedio ?PERMedioSector2))
    =>
-   (if (> ?RPD1 ( + 1 ( + ?RPD2 ?var12))) then
+   (if (neq ?empresa1 ?empresa2) then
+   (if (> ?acciones 0) then
+    (if (> ?RPD1 ( + 1 ( + ?RPD2 ?var12))) then
       (assert (Propuesta (NombreEmpresa ?empresa2) (NombreEmpresa2 ?empresa1)(NombreSector ?NombreSector2) (TipoPropuesta "Cambiar")
                          (RE (- ?RPD1 (+ 1 (+ (* ?RPD2 ( / (* 100 (- ?PER2 ?PERMedioSector2)) (* 5 ?PER2)   )) ?var12 ) )))
                          (Explicacion (str-cat ?empresa1 " debe tener una revalorizacion acorde con la evolucion de la bolsa.
@@ -465,6 +468,8 @@ Por dividendos se espera un " (* ?RPD2 100) "%, que es mas de lo que te esta dan
 por eso te propongo cambiar los valores por los de esta otra. " )) ))
       (assert (PropuestasPeores (NombreEmpresa ?empresa2) (NombreEmpresa2 ?empresa1)
                                 (RE (- ?RPD1 (+ 1 (+ (* ?RPD2 ( / (* 100 (- ?PER2 ?PERMedioSector2)) (* 5 ?PER2)   )) ?var12 ) ))) ))
+     )
+    )
     )
 )
 
@@ -561,6 +566,11 @@ El rendimiento esperado es de " ?miRE crlf)
         (printout t " ¿Cuantas acciones quieres cambiar de " ?nombreEmpresa " a " ?nombreEmpresa2 "?. Tienes " ?accionesCartera " acciones." crlf)
         (bind ?Respuesta (explode$ (readline)))
         (assert (CambiarAccionesEmpresa ?nombreEmpresa ?nombreEmpresa2 ?Respuesta))
+    )
+    (if (eq ?tipo "Invertir") then
+            (printout t " ¿Cuantas acciones quieres comprar de " ?nombreEmpresa "?.. Tienes " ?accionesCartera " acciones." crlf)
+            (bind ?Respuesta (explode$ (readline)))
+            (assert (ComprarAcciones ?nombreEmpresa ?Respuesta))
     )
     (retract ?f)
 )
